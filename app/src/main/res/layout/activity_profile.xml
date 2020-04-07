@@ -16,7 +16,7 @@
 
         //profile picture circle view
         <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/profile_image"
+            android:id="@+id/profileImage_profile"
             android:layout_width="93dp"
             android:layout_height="84dp"
             android:layout_centerHorizontal="true"
@@ -25,7 +25,7 @@
 
         //plus icon below profile picture
         <ImageView
-            android:id="@+id/plusIconProfile"
+            android:id="@+id/plusIcon_profile"
             android:layout_width="86dp"
             android:layout_height="57dp"
             android:layout_alignParentStart="true"
@@ -59,7 +59,7 @@
             android:background="@color/colorWhiteGray">
 
             <ImageView
-                android:id="@+id/personIcon"
+                android:id="@+id/personIcon_profile"
                 app:srcCompat="@drawable/ic_person_black_24dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -67,8 +67,8 @@
                 android:layout_marginTop="9dp"/>
 
             <TextView
-                android:id="@+id/CNICEditTextID"
-                android:text="Abdullah Jafar"
+                android:id="@+id/CNICEditTextID_profile"
+                android:text="your name..."
                 android:layout_width="320dp"
                 android:layout_height="40dp"
                 android:layout_marginLeft="@dimen/activity_horizontal_margin_of_textView"
@@ -85,7 +85,7 @@
             android:background="@color/colorWhiteGray">
 
             <ImageView
-                android:id="@+id/CNICIcon"
+                android:id="@+id/CNICIcon_profile"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/activity_horizontal_margin_of_icon"
@@ -93,8 +93,8 @@
                 android:layout_marginTop="9dp"/>
 
             <TextView
-                android:id="@+id/phoneEditTextNoID"
-                android:text="3520345454541"
+                android:id="@+id/phonNoID_profile"
+                android:text="03..."
                 android:layout_width="320dp"
                 android:layout_height="40dp"
                 android:layout_marginLeft="@dimen/activity_horizontal_margin_of_textView"
@@ -111,7 +111,7 @@
             android:background="@color/colorWhiteGray">
 
             <ImageView
-                android:id="@+id/phonNoIcon"
+                android:id="@+id/phonNoIcon_profile"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/activity_horizontal_margin_of_icon"
@@ -119,12 +119,12 @@
                 android:layout_marginTop="9dp"/>
 
             <TextView
-                android:id="@+id/addressEditTextID"
+                android:id="@+id/passwordID_profile"
                 android:layout_width="320dp"
                 android:layout_height="40dp"
                 android:layout_marginLeft="@dimen/activity_horizontal_margin_of_textView"
                 android:padding="10dip"
-                android:text="3338899444"
+                android:text="your email..."
                 android:textColor="#000000"
                 android:textSize="@dimen/activity_textView_size" />
         </LinearLayout>
@@ -137,7 +137,7 @@
             android:background="@color/colorWhiteGray">
 
             <ImageView
-                android:id="@+id/AddressIcon"
+                android:id="@+id/AddressIcon_profile"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/activity_horizontal_margin_of_icon"
@@ -145,13 +145,13 @@
                 android:layout_marginTop="11dp"/>
 
             <TextView
-                android:id="@+id/nameEditTextID"
+                android:id="@+id/nameEditTextID_profile"
                 android:layout_width="320dp"
                 android:layout_height="40dp"
                 android:layout_marginTop="2dp"
                 android:layout_marginLeft="@dimen/activity_horizontal_margin_of_textView"
                 android:padding="10dp"
-                android:text="Wafaqi Colony, Johar town Lahore"
+                android:text="your address..."
                 android:textColor="#000000"
                 android:textSize="@dimen/activity_textView_size" />
         </LinearLayout>

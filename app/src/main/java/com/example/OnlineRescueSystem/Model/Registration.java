@@ -4,18 +4,26 @@ public class Registration {
 
     private String image;
     private String name;
-    private String CNIC;
     private String phoneNumber;
+    private String email;
     private String address;
     private String timeStamp;
 
-    public Registration(String image, String name, String CNIC, String phoneNumber, String address, String timeStamp) {
+    public Registration(String image, String name, String phoneNumber, String email, String address, String timeStamp) {
         this.image = image;
         this.name = name;
-        this.CNIC = CNIC;
         this.phoneNumber = phoneNumber;
+        this.email = email;
         this.address = address;
         this.timeStamp = timeStamp;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public String getTimeStamp() {
@@ -44,14 +52,6 @@ public class Registration {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public String getCNIC() {
-        return CNIC;
-    }
-
-    public void setCNIC(String CNIC) {
-        this.CNIC = CNIC;
     }
 
     public String getPhoneNumber() {
