@@ -13,6 +13,7 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
@@ -25,59 +26,7 @@ public class DashBoardLayout extends AppCompatActivity implements View.OnClickLi
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dash_board);
-
-//        accidentCardView = findViewById(R.id.accidentImageAndLableCardViewID);
-//        fireCardView = findViewById(R.id.fireImageAndLableCardViewID);
-//        medicalCardView = findViewById(R.id.medicalImageAndLableCardViewID);
-//        crimeCardView = findViewById(R.id.crimeImageAndLableCardViewID);
-//        drowningCardView = findViewById(R.id.drowningImageAndLableCardViewID);
-//        structureCollapseCardView = findViewById(R.id.structureCollapseImageAndLableCardViewID);
-//
-//
-//        accidentCardView.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Toast.makeText(DashBoardLayout.this, "Accident", Toast.LENGTH_SHORT).show();
-//            }
-//        });
-//
-//        fireCardView.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Toast.makeText(DashBoardLayout.this, "Fire", Toast.LENGTH_SHORT).show();
-//            }
-//        });
-//
-//        medicalCardView.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Toast.makeText(DashBoardLayout.this, "Medical", Toast.LENGTH_SHORT).show();
-//            }
-//        });
-//
-//        crimeCardView.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Toast.makeText(DashBoardLayout.this, "Crime", Toast.LENGTH_SHORT).show();
-//            }
-//        });
-//
-//        drowningCardView.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Toast.makeText(DashBoardLayout.this, "Drowning", Toast.LENGTH_SHORT).show();
-//            }
-//        });
-//
-//        structureCollapseCardView.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Toast.makeText(DashBoardLayout.this, "Structure COllapse", Toast.LENGTH_SHORT).show();
-//            }
-//        });
-
     }
-
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
@@ -103,6 +52,14 @@ public class DashBoardLayout extends AppCompatActivity implements View.OnClickLi
             case (R.id.structureCollapseImageAndLableCardViewID):
                 open("Building collapse case");
                 break;
+
+            case (R.id.callIcon):
+                open("Simple call");
+                break;
+            case (R.id.rightLoweView):
+                open("Simple call");
+                break;
+
 
         }
     }
@@ -164,9 +121,21 @@ public class DashBoardLayout extends AppCompatActivity implements View.OnClickLi
             }
         }
     }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.login_profile, menu);
         return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.action_profile:
+                startActivity(new Intent(DashBoardLayout.this,ProfileActivity.class));
+                finish();
+                break;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

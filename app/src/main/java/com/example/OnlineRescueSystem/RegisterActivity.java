@@ -39,6 +39,7 @@ public class RegisterActivity extends AppCompatActivity {
     private Button registerButton;
 
     private DatabaseReference mPostDatabase;
+    private FirebaseAuth.AuthStateListener mAuthListener;
     private FirebaseAuth mAuth;
     private FirebaseUser mUser;
     private ProgressDialog mProgress;
@@ -177,5 +178,20 @@ public class RegisterActivity extends AppCompatActivity {
             Toast.makeText(RegisterActivity.this,"please Fill all field",Toast.LENGTH_LONG).show();
         }
     }// end on startPointing
+
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        mAuth.addAuthStateListener(mAuthListener);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if(mAuthListener != null){
+            mAuth.removeAuthStateListener(mAuthListener);
+        }
+    }
 
 }// end of class
