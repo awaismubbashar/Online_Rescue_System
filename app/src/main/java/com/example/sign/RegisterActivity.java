@@ -187,7 +187,7 @@ public class RegisterActivity extends AppCompatActivity {
                     Toast.makeText(RegisterActivity.this,"registered ",Toast.LENGTH_LONG).show();
 
 
-                    Intent ntent = new Intent(RegisterActivity.this, DashBoardLayout.class);
+                    Intent ntent = new Intent(RegisterActivity.this, LoginScreen.class);
                     ntent.putExtra("phone Number",mNumber);
                     startActivity(ntent);
                     finish();
