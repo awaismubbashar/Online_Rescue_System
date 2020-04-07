@@ -34,7 +34,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
-
+//add
 public class RegisterActivity extends AppCompatActivity {
 
     private CircleImageView imageRegister;
@@ -185,7 +185,6 @@ public class RegisterActivity extends AppCompatActivity {
                     newPost.setValue(dataToSave);
                     mProgress.dismiss();
                     Toast.makeText(RegisterActivity.this,"registered ",Toast.LENGTH_LONG).show();
-
 
                     Intent ntent = new Intent(RegisterActivity.this, LoginScreen.class);
                     ntent.putExtra("phone Number",mNumber);
