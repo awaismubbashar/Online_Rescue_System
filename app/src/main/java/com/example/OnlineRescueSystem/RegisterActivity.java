@@ -158,13 +158,12 @@ public class RegisterActivity extends AppCompatActivity {
         final String mEmail = emailRegister.getText().toString().trim();
         final String maddress = addressRegister.getText().toString().trim();
 
-        mPostDatabase = FirebaseDatabase.getInstance().getReference().child("Caller Data").child(mNumber);
         if (!TextUtils.isEmpty(mName) && !TextUtils.isEmpty(mNumber)
                 && mImageUri != null && !TextUtils.isEmpty(maddress)){
 
 
             // start uploading...
-            StorageReference filepath = mStorageRef.child("Caller")
+            StorageReference filepath = mStorageRef.child("Caller Data")
                     .child(mImageUri.getLastPathSegment());
 
             filepath.putFile(mImageUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {

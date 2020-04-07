@@ -29,16 +29,11 @@ public class DashBoardLayout extends AppCompatActivity implements View.OnClickLi
 
     private View leftLowerViewForMap;
     private static final int Request_Call = 1;
-    private String accidentType = null ;
-    private String num;
+    private String accidentType = null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dash_board);
-
-        Intent intent = getIntent();
-        num =intent.getStringExtra("phone Number");
-        Toast.makeText(DashBoardLayout.this,""+num,Toast.LENGTH_LONG).show();
 
         leftLowerViewForMap = findViewById(R.id.leftLoweViewForMap);
         leftLowerViewForMap.setOnClickListener(new View.OnClickListener() {
@@ -152,7 +147,6 @@ public class DashBoardLayout extends AppCompatActivity implements View.OnClickLi
             case R.id.action_profile:
 
                Intent intent3 = new Intent(DashBoardLayout.this,ProfileActivity.class);
-                intent3.putExtra("Phone Number",num);
                 startActivity(intent3);
                break;
         }

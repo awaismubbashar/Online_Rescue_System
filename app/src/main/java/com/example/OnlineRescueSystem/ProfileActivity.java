@@ -45,17 +45,15 @@ public class ProfileActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
 
-        Intent intent = getIntent();
-        String num2 = intent.getStringExtra("Phone Number");
 
         mAuth = FirebaseAuth.getInstance();
         mUser = mAuth.getCurrentUser();
 
         // Write a message to the database
         database = FirebaseDatabase.getInstance();
-        myRef = database.getReference("Caller Data").child(num2);
+        myRef = database.getReference("Caller Data");
 
-        Toast.makeText(ProfileActivity.this,""+num2,Toast.LENGTH_LONG).show();
+        //Toast.makeText(ProfileActivity.this,""+num2,Toast.LENGTH_LONG).show();
 
         mProgress = new ProgressDialog(this);
         namePofile = findViewById(R.id.CNICEditTextID_profile);
@@ -92,7 +90,7 @@ public class ProfileActivity extends AppCompatActivity {
                 Registration registration = dataSnapshot.getValue(Registration.class);
 
                 // showing progress dialog
-                mProgress.setMessage("creating account please wait.. ");
+                mProgress.setMessage("please wait.. ");
                 mProgress.show();
 
                 //fetching data from database
