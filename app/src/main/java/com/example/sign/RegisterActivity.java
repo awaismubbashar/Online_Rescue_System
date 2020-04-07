@@ -90,7 +90,7 @@ public class RegisterActivity extends AppCompatActivity {
         towardsLoginTextView = (TextView) findViewById(R.id.towardsLoginTextView_register);
 
         towardsLoginTextView.setPaintFlags(towardsLoginTextView.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
-//        registerTextView.setText(Html.fromHtml("<u>underlined</u> text"));
+
         towardsLoginTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
