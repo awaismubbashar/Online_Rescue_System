@@ -1,8 +1,4 @@
-package com.example.OnlineRescueSystem;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
+package com.example.sign;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -12,8 +8,11 @@ import android.view.MenuItem;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
-import com.example.OnlineRescueSystem.Model.Registration;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+
+import com.example.sign.Model.Registration;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
@@ -107,9 +106,6 @@ public class ProfileActivity extends AppCompatActivity {
 
 
                 ///profileImage.setImageResource(R.drawable.accidentview);
-
-
-                Glide.with(getApplicationContext()).load(registration.getImage()).into(profileImage);
 
                 //Picasso.get().load(registration.getImage()).into(profileImage);
                 //Picasso.with(getApplicationContext()).load(mImage).into(profileImage);

@@ -1,12 +1,4 @@
-package com.example.OnlineRescueSystem;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.cardview.widget.CardView;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
+package com.example.sign;
 
 import android.Manifest;
 import android.content.DialogInterface;
@@ -19,11 +11,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
-import com.example.OnlineRescueSystem.Model.Registration;
-import com.google.firebase.database.ChildEventListener;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 public class DashBoardLayout extends AppCompatActivity implements View.OnClickListener{
 
@@ -39,10 +31,14 @@ public class DashBoardLayout extends AppCompatActivity implements View.OnClickLi
         leftLowerViewForMap.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(DashBoardLayout.this, MainActivity.class);
+                Intent intent = new Intent(DashBoardLayout.this, MapsActivity.class);
                 startActivity(intent);
             }
         });
+
+        Intent intent = getIntent();
+        String num = intent.getStringExtra("phone Number");
+        Toast.makeText(DashBoardLayout.this,""+num,Toast.LENGTH_LONG).show();
     }
 
     @Override

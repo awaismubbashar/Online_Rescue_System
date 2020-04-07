@@ -1,4 +1,4 @@
-package com.example.OnlineRescueSystem;
+package com.example.sign;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
