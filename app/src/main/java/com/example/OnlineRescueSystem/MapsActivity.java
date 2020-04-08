@@ -70,8 +70,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 mMap.moveCamera(CameraUpdateFactory.newLatLng(currentLocation));
 
                 if(lat> 20.0 && log >20.0){
-                    myRef.child("lat").child(""+lat);
-                    myRef.child("lat").child(""+log);
+                    myRef.child("lat").setValue(lat);
+                    myRef.child("lat").setValue(log);
                     startActivity(new Intent(MapsActivity.this,NewDeletable.class));
                     finish();
                 }
