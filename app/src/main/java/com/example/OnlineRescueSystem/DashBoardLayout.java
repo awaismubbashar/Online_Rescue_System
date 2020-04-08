@@ -24,12 +24,12 @@ import com.example.OnlineRescueSystem.Model.Registration;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-
 public class DashBoardLayout extends AppCompatActivity implements View.OnClickListener{
 
     private View leftLowerViewForMap;
     private static final int Request_Call = 1;
-    private String accidentType = null;
+    public String accidentType ="";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -69,6 +69,12 @@ public class DashBoardLayout extends AppCompatActivity implements View.OnClickLi
 
             case (R.id.structureCollapseImageAndLableCardViewID):
                 open("Building collapse case");
+                break;
+            case (R.id.callIcon):
+                open("Simple call");
+                break;
+            case (R.id.rightLoweViewForCall):
+                open("Simple call");
                 break;
 
         }
@@ -115,6 +121,10 @@ public class DashBoardLayout extends AppCompatActivity implements View.OnClickLi
         }else {
 
             startActivity(new Intent(Intent.ACTION_CALL, Uri.parse("tel:03451012867")));
+            Intent intent = new Intent(DashBoardLayout.this,MapsActivity.class);
+            intent.putExtra("Accident Type",accidentType);
+            startActivity(intent);
+            finish();
 
         }
     }
@@ -128,6 +138,8 @@ public class DashBoardLayout extends AppCompatActivity implements View.OnClickLi
                 makeCall();
             }else {
                 Toast.makeText(this,"Permission denied",Toast.LENGTH_SHORT);
+
+
             }
         }
     }

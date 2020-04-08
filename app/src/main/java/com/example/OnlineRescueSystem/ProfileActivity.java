@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
@@ -48,12 +49,9 @@ public class ProfileActivity extends AppCompatActivity {
 
         mAuth = FirebaseAuth.getInstance();
         mUser = mAuth.getCurrentUser();
-
-        // Write a message to the database
+        String subEmail = mUser.getEmail();
         database = FirebaseDatabase.getInstance();
-        myRef = database.getReference("Caller Data");
-
-        //Toast.makeText(ProfileActivity.this,""+num2,Toast.LENGTH_LONG).show();
+        myRef = database.getReference("Caller Data").child(subEmail.substring(0,subEmail.indexOf(".")));
 
         mProgress = new ProgressDialog(this);
         namePofile = findViewById(R.id.CNICEditTextID_profile);

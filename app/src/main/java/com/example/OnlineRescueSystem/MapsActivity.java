@@ -6,6 +6,7 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
@@ -21,6 +22,11 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.StorageReference;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
@@ -28,6 +34,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private LocationManager locationManager;
     private LocationListener locationListener;
     Marker marker;
+    private DatabaseReference myRef;
+    private FirebaseDatabase database;
+    private FirebaseAuth mAuth;
+    private FirebaseUser mUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +49,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync( this);
 
+        mAuth = FirebaseAuth.getInstance();
+        mUser = mAuth.getCurrentUser();
+        String subEmail = mUser.getEmail();
+        database = FirebaseDatabase.getInstance();
+        myRef = database.getReference("Caller Data").child(subEmail.substring(0,subEmail.indexOf(".")));
         locationManager = (LocationManager) this.getSystemService(LOCATION_SERVICE);
         locationListener = new LocationListener() {
 
@@ -48,20 +63,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 double lat = location.getLatitude();
                 double log = location.getLongitude();
                 mMap.clear();
-//                if (marker != null){
-//                    marker.remove();
-//                }
 
                 LatLng currentLocation = new LatLng(lat,log);
                 mMap.addMarker(new MarkerOptions().position(currentLocation).title("marker1"));
-               // mMap.moveCamera(CameraUpdateFactory.zoomTo(16));
 
-                // LatLng latLng1 = new LatLng(lat,log);
                 mMap.moveCamera(CameraUpdateFactory.newLatLng(currentLocation));
-                // mMap.animateCamera(CameraUpdateFactory.zoomTo(16));
 
-//                mMap.addMarker(new MarkerOptions().position(krk).title("Marker in Jigar Palace"));
-//                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(krk,16));
+                if(lat> 20.0 && log >20.0){
+                    myRef.child("lat").child(""+lat);
+                    myRef.child("lat").child(""+log);
+                    startActivity(new Intent(MapsActivity.this,NewDeletable.class));
+                }
 
                 Toast.makeText(MapsActivity.this,lat+" "+log,Toast.LENGTH_SHORT).show();
                 Log.d("Location",location.toString());
@@ -91,10 +103,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             // TODO: Consider calling
             //    Activity#requestPermissions
             // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for Activity#requestPermissions for more details.
 
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
             return;
@@ -116,8 +124,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-        //mMap.clear();
-        //mMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
+        mMap.clear();
+        mMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
 
         // Add a marker in Sydney and move the camera
 //        LatLng krk = new LatLng(31.1816995,74.0909306);
