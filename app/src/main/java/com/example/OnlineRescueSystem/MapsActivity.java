@@ -73,6 +73,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     myRef.child("lat").child(""+lat);
                     myRef.child("lat").child(""+log);
                     startActivity(new Intent(MapsActivity.this,NewDeletable.class));
+                    finish();
                 }
 
                 Toast.makeText(MapsActivity.this,lat+" "+log,Toast.LENGTH_SHORT).show();
