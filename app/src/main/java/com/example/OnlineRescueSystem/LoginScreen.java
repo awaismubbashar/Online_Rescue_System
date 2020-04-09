@@ -44,14 +44,18 @@ public class LoginScreen extends AppCompatActivity {
 
         mAuth = FirebaseAuth.getInstance();
         mUser = mAuth.getCurrentUser();
+        mAuth = FirebaseAuth.getInstance();
         firebaseAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-                if (user != null){
+                mUser = firebaseAuth.getCurrentUser();
+                if (mUser != null) {
+                    Toast.makeText(LoginScreen.this, "user sign in", Toast.LENGTH_LONG)
+                            .show();
                     startActivity(new Intent(LoginScreen.this,DashBoardLayout.class));
                     finish();
-                    return;
+                } else {
+                    Toast.makeText(LoginScreen.this, "Signed in or register first", Toast.LENGTH_LONG).show();
                 }
             }
         };
@@ -62,9 +66,6 @@ public class LoginScreen extends AppCompatActivity {
         loginButton = (Button) findViewById(R.id.loginButtonID_login);
         registerTextView = (TextView) findViewById(R.id.registerTextViewID_login);
 
-        mAuth = FirebaseAuth.getInstance();
-
-
         ////registerTextView clickListener
         registerTextView.setPaintFlags(registerTextView.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
 //        registerTextView.setText(Html.fromHtml("<u>underlined</u> text"));
@@ -73,7 +74,6 @@ public class LoginScreen extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(LoginScreen.this,RegisterActivity.class);
                 startActivity(intent);
-                finish();
             }
         });
 
@@ -124,6 +124,10 @@ public class LoginScreen extends AppCompatActivity {
     @Override
     protected void onStop() {
         super.onStop();
-        mAuth.removeAuthStateListener(firebaseAuthListener);
+        if(firebaseAuthListener != null){
+            mAuth.removeAuthStateListener(firebaseAuthListener);
+        }
     }
 }
+
+

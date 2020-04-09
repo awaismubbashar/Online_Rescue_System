@@ -177,8 +177,7 @@ public class RegisterActivity extends AppCompatActivity {
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
 
                     Uri downloadUrl = taskSnapshot.getUploadSessionUri();
-                    DatabaseReference newPost = mPostDatabase.child(mEmail.substring(0,i)).child("profile detail");
-                    Log.d(TAG, "register: "+mAuth.getUid());
+                    DatabaseReference newPost = mPostDatabase.child(mEmail.substring(0,i)).child("profile detail").child("wese");
 
                     Map<String, String> dataToSave = new HashMap<>();
                     dataToSave.put("phoneNumber", mNumber);

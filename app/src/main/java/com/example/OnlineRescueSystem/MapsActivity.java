@@ -15,6 +15,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.example.OnlineRescueSystem.Model.Callinfo;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -53,7 +54,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mUser = mAuth.getCurrentUser();
         String subEmail = mUser.getEmail();
         database = FirebaseDatabase.getInstance();
-        myRef = database.getReference("Caller Data").child(subEmail.substring(0,subEmail.indexOf(".")));
+        myRef = database.getReference("Caller Data").child(subEmail.substring(0,subEmail.indexOf("."))).child("quaerty");
         locationManager = (LocationManager) this.getSystemService(LOCATION_SERVICE);
         locationListener = new LocationListener() {
 
@@ -72,8 +73,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 if(lat> 20.0 && log >20.0){
                     Intent intent = getIntent();
                     String accident1 = intent.getStringExtra("Accident Type");
-                    myRef.child("lat").setValue(lat);
-                    myRef.child("log").setValue(log);
+                    String time =  String.valueOf(java.lang.System.currentTimeMillis());
+                    Callinfo callinfo = new Callinfo(""+lat,""+log,""+accident1,""+time);
+                    myRef.setValue(callinfo);
 
                     startActivity(new Intent(MapsActivity.this,NewDeletable.class));
                     finish();
@@ -115,32 +117,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
     }
 
-    @Override
-    protected void onPause() {
-        super.onPause();
-        LocationListener locationListener = new LocationListener() {
-            @Override
-            public void onLocationChanged(Location location) {
-
-            }
-
-            @Override
-            public void onStatusChanged(String provider, int status, Bundle extras) {
-
-            }
-
-            @Override
-            public void onProviderEnabled(String provider) {
-
-            }
-
-            @Override
-            public void onProviderDisabled(String provider) {
-
-            }
-        };
-        locationManager.removeUpdates(locationListener);
-    }
 
     /**
      * Manipulates the map once available.

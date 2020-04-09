@@ -30,7 +30,7 @@ public class ProfileActivity extends AppCompatActivity {
     private static final String TAG = "ProfileActivity";
     private FirebaseDatabase database;
     private DatabaseReference myRef;
-    private ProgressDialog mProgress;
+    private ProgressDialog mProgress1;
 
     private CircleImageView profileImage;
     private TextView namePofile,addressP,phoneNumberP,emailP;
@@ -50,10 +50,13 @@ public class ProfileActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         mUser = mAuth.getCurrentUser();
         String subEmail = mUser.getEmail();
+
         database = FirebaseDatabase.getInstance();
         myRef = database.getReference("Caller Data").child(subEmail.substring(0,subEmail.indexOf("."))).child("profile detail");
 
-        mProgress = new ProgressDialog(this);
+        Log.d(TAG, "onCreate: "+myRef);
+
+        mProgress1 = new ProgressDialog(ProfileActivity.this);
         namePofile = findViewById(R.id.CNICEditTextID_profile);
         addressP = findViewById(R.id.nameEditTextID_profile);
         phoneNumberP = findViewById(R.id.phonNoID_profile);
@@ -70,11 +73,10 @@ public class ProfileActivity extends AppCompatActivity {
     }
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        switch (item.getItemId()){
-            case R.id.action_logout:
-                startActivity(new Intent(ProfileActivity.this,LoginScreen.class));
-                finish();
-                break;
+        if (item.getItemId() == R.id.action_logout){
+            mAuth.signOut();
+            startActivity(new Intent(ProfileActivity.this,LoginScreen.class));
+            finish();
         }
         return super.onOptionsItemSelected(item);
     }
@@ -87,9 +89,12 @@ public class ProfileActivity extends AppCompatActivity {
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 Registration registration = dataSnapshot.getValue(Registration.class);
 
+                Log.d(TAG, "onChildAdded: "+registration);
+
+
                 // showing progress dialog
-                mProgress.setMessage("please wait.. ");
-                mProgress.show();
+                mProgress1.setMessage("please wait.. ");
+                mProgress1.show();
 
                 //fetching data from database
                 mName = registration.getName();
@@ -107,12 +112,12 @@ public class ProfileActivity extends AppCompatActivity {
                 ///profileImage.setImageResource(R.drawable.accidentview);
 
 
-                Glide.with(getApplicationContext()).load(registration.getImage()).into(profileImage);
+                //Glide.with(getApplicationContext()).load(registration.getImage()).into(profileImage);
 
                 //Picasso.get().load(registration.getImage()).into(profileImage);
                 //Picasso.with(getApplicationContext()).load(mImage).into(profileImage);
                 //profileImage.setImageResource(mImage);
-                mProgress.dismiss();
+                mProgress1.dismiss();
 //                Toast.makeText(ProfileActivity.this,"1st here"+mImage,Toast.LENGTH_LONG).show();
 
             }
