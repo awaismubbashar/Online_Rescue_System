@@ -1,24 +1,19 @@
-<<<<<<< HEAD:app/src/main/java/com/example/sign/ProfileActivity.java
 package com.example.sign;
-=======
-package com.example.OnlineRescueSystem;
-
-import androidx.appcompat.app.AppCompatActivity;
->>>>>>> origin/master:app/src/main/java/com/example/OnlineRescueSystem/ProfileActivity.java
-
-import android.content.Intent;
-import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
-<<<<<<< HEAD:app/src/main/java/com/example/sign/ProfileActivity.java
-import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.ProgressDialog;
+import android.content.Intent;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.bumptech.glide.Glide;
 import com.example.sign.Model.Registration;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -29,22 +24,50 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import de.hdodenhof.circleimageview.CircleImageView;
-=======
->>>>>>> origin/master:app/src/main/java/com/example/OnlineRescueSystem/ProfileActivity.java
 
 public class ProfileActivity extends AppCompatActivity {
+
+    private static final String TAG = "ProfileActivity";
+    private FirebaseDatabase database;
+    private DatabaseReference myRef;
+    private ProgressDialog mProgress;
+
+    private CircleImageView profileImage;
+    private TextView namePofile,addressP,phoneNumberP,emailP;
+    private String mName,mPhoneNumber,mEmail,mAddress;
+    private String mImage;
+
+    private FirebaseAuth mAuth;
+    private FirebaseAuth.AuthStateListener firebaseAuthListener;
+    private FirebaseUser mUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
-    }
+
+
+        mAuth = FirebaseAuth.getInstance();
+        mUser = mAuth.getCurrentUser();
+        String subEmail = mUser.getEmail();
+        database = FirebaseDatabase.getInstance();
+        myRef = database.getReference("Caller Data").child(subEmail.substring(0,subEmail.indexOf(".")));
+
+        mProgress = new ProgressDialog(this);
+        namePofile = findViewById(R.id.CNICEditTextID_profile);
+        addressP = findViewById(R.id.nameEditTextID_profile);
+        phoneNumberP = findViewById(R.id.phonNoID_profile);
+        emailP = findViewById(R.id.passwordID_profile);
+        profileImage = findViewById(R.id.profileImage_profile);
+
+    }  // end of on create
+
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.logout_profile, menu);
         return super.onCreateOptionsMenu(menu);
     }
-<<<<<<< HEAD:app/src/main/java/com/example/sign/ProfileActivity.java
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()){
@@ -83,6 +106,9 @@ public class ProfileActivity extends AppCompatActivity {
 
                 ///profileImage.setImageResource(R.drawable.accidentview);
 
+
+                Glide.with(getApplicationContext()).load(registration.getImage()).into(profileImage);
+
                 //Picasso.get().load(registration.getImage()).into(profileImage);
                 //Picasso.with(getApplicationContext()).load(mImage).into(profileImage);
                 //profileImage.setImageResource(mImage);
@@ -113,22 +139,4 @@ public class ProfileActivity extends AppCompatActivity {
         });
 
     }// end of onStart
-=======
-//    @Override
-//    public boolean onCreateOptionsMenu(Menu menu) {
-//        // Inflate the menu; this adds items to the action bar if it is present.
-//        final MenuInflater inflater = getMenuInflater();
-//        inflater.inflate(R.menu.main, menu);
-//        MenuItem main = menu.findItem(R.id.icon_only);
-//        main.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-//            @Override
-//            public boolean onMenuItemClick(MenuItem item) {
-//                Intent intent = new Intent(ProfileActivity.this, RegisterActivity.class);
-//                startActivity(intent);
-//                return false;
-//            }
-//        });
-//        return true;
-//    }
->>>>>>> origin/master:app/src/main/java/com/example/OnlineRescueSystem/ProfileActivity.java
 }

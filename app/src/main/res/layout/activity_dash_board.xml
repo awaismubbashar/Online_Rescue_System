@@ -264,7 +264,7 @@
     </androidx.cardview.widget.CardView>
 
     <ImageView
-        android:id="@+id/leftLoweView"
+        android:id="@+id/leftLoweViewForMap"
         android:layout_width="191dp"
         android:layout_height="65dp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -277,7 +277,7 @@
 
     <ImageView
 
-        android:id="@+id/rightLoweView"
+        android:id="@+id/rightLoweViewForCall"
         android:onClick="onClick"
         android:layout_width="191dp"
         android:layout_height="65dp"
@@ -285,7 +285,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.933"
-        app:layout_constraintStart_toEndOf="@+id/leftLoweView"
+        app:layout_constraintStart_toEndOf="@+id/leftLoweViewForMap"
         app:srcCompat="@drawable/left" />
 
     <ImageView
@@ -294,10 +294,10 @@
         android:layout_height="53dp"
         android:src="@drawable/map"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/leftLoweView"
+        app:layout_constraintEnd_toEndOf="@+id/leftLoweViewForMap"
         app:layout_constraintHorizontal_bias="0.26"
-        app:layout_constraintStart_toStartOf="@+id/leftLoweView"
-        app:layout_constraintTop_toTopOf="@+id/leftLoweView"
+        app:layout_constraintStart_toStartOf="@+id/leftLoweViewForMap"
+        app:layout_constraintTop_toTopOf="@+id/leftLoweViewForMap"
         app:layout_constraintVertical_bias="0.97"
         tools:ignore="MissingConstraints" />
 
@@ -307,11 +307,11 @@
         android:layout_width="108dp"
         android:layout_height="54dp"
         android:src="@drawable/call"
-        app:layout_constraintBottom_toBottomOf="@+id/rightLoweView"
-        app:layout_constraintEnd_toEndOf="@+id/rightLoweView"
+        app:layout_constraintBottom_toBottomOf="@+id/rightLoweViewForCall"
+        app:layout_constraintEnd_toEndOf="@+id/rightLoweViewForCall"
         app:layout_constraintHorizontal_bias="0.77"
-        app:layout_constraintStart_toStartOf="@+id/rightLoweView"
-        app:layout_constraintTop_toTopOf="@+id/rightLoweView"
+        app:layout_constraintStart_toStartOf="@+id/rightLoweViewForCall"
+        app:layout_constraintTop_toTopOf="@+id/rightLoweViewForCall"
         app:layout_constraintVertical_bias="1.0"
         tools:ignore="MissingConstraints" />
 

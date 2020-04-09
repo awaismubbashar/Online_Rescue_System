@@ -1,14 +1,12 @@
-<<<<<<< HEAD:app/src/main/java/com/example/sign/DashBoardLayout.java
 package com.example.sign;
-=======
-package com.example.OnlineRescueSystem;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
->>>>>>> origin/master:app/src/main/java/com/example/OnlineRescueSystem/DashBoardLayout.java
 
 import android.Manifest;
 import android.content.DialogInterface;
@@ -21,41 +19,32 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
-<<<<<<< HEAD:app/src/main/java/com/example/sign/DashBoardLayout.java
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-
-=======
->>>>>>> origin/master:app/src/main/java/com/example/OnlineRescueSystem/DashBoardLayout.java
+import com.bumptech.glide.Glide;
+import com.example.sign.Model.Registration;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 public class DashBoardLayout extends AppCompatActivity implements View.OnClickListener{
 
-   // private CardView accidentCardView, fireCardView, medicalCardView, crimeCardView, drowningCardView, structureCollapseCardView;
+    private View leftLowerViewForMap;
     private static final int Request_Call = 1;
-    private String accidentType = null ;
+    public String accidentType ="";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dash_board);
-<<<<<<< HEAD:app/src/main/java/com/example/sign/DashBoardLayout.java
 
         leftLowerViewForMap = findViewById(R.id.leftLoweViewForMap);
         leftLowerViewForMap.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(DashBoardLayout.this, MapsActivity.class);
+                Intent intent = new Intent(DashBoardLayout.this, MainActivity.class);
                 startActivity(intent);
             }
         });
-
-        Intent intent = getIntent();
-        String num = intent.getStringExtra("phone Number");
-        Toast.makeText(DashBoardLayout.this,""+num,Toast.LENGTH_LONG).show();
-=======
->>>>>>> origin/master:app/src/main/java/com/example/OnlineRescueSystem/DashBoardLayout.java
     }
+
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
@@ -81,14 +70,12 @@ public class DashBoardLayout extends AppCompatActivity implements View.OnClickLi
             case (R.id.structureCollapseImageAndLableCardViewID):
                 open("Building collapse case");
                 break;
-
             case (R.id.callIcon):
                 open("Simple call");
                 break;
-            case (R.id.rightLoweView):
+            case (R.id.rightLoweViewForCall):
                 open("Simple call");
                 break;
-
 
         }
     }
@@ -114,7 +101,7 @@ public class DashBoardLayout extends AppCompatActivity implements View.OnClickLi
                 Toast.makeText(DashBoardLayout.this, " Press Yes on notification if you need 1122", Toast.LENGTH_LONG).show();
 
 
-                 finish();
+                finish();
             }
         });
 
@@ -125,7 +112,7 @@ public class DashBoardLayout extends AppCompatActivity implements View.OnClickLi
     protected void makeCall() {
 
         Intent callIntent = new Intent(Intent.ACTION_CALL);
-        callIntent.setData(Uri.parse("tel:9875432100"));
+        callIntent.setData(Uri.parse("tel:03451012867"));
 
         if (ContextCompat.checkSelfPermission(DashBoardLayout.this,android.Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(DashBoardLayout.this, new String[]{Manifest.permission.CALL_PHONE},Request_Call); {
@@ -134,6 +121,10 @@ public class DashBoardLayout extends AppCompatActivity implements View.OnClickLi
         }else {
 
             startActivity(new Intent(Intent.ACTION_CALL, Uri.parse("tel:03451012867")));
+            Intent intent = new Intent(DashBoardLayout.this,MapsActivity.class);
+            intent.putExtra("Accident Type",accidentType);
+            startActivity(intent);
+            finish();
 
         }
     }
@@ -146,10 +137,14 @@ public class DashBoardLayout extends AppCompatActivity implements View.OnClickLi
             if(grantResults.length>0&& grantResults[0]== PackageManager.PERMISSION_GRANTED){
                 makeCall();
             }else {
-                Toast.makeText(this,"Permison denied",Toast.LENGTH_SHORT);
+                Toast.makeText(this,"Permission denied",Toast.LENGTH_SHORT);
+
+
             }
         }
     }
+
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -157,12 +152,14 @@ public class DashBoardLayout extends AppCompatActivity implements View.OnClickLi
         return super.onCreateOptionsMenu(menu);
     }
 
+
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()){
             case R.id.action_profile:
-                startActivity(new Intent(DashBoardLayout.this,ProfileActivity.class));
-                finish();
+
+                Intent intent3 = new Intent(DashBoardLayout.this,ProfileActivity.class);
+                startActivity(intent3);
                 break;
         }
         return super.onOptionsItemSelected(item);
