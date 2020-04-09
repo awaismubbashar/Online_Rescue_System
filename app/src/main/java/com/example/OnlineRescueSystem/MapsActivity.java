@@ -76,9 +76,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     String time =  String.valueOf(java.lang.System.currentTimeMillis());
                     Callinfo callinfo = new Callinfo(""+lat,""+log,""+accident1,""+time);
                     myRef.setValue(callinfo);
+                    locationManager.removeUpdates(locationListener);
 
-                    startActivity(new Intent(MapsActivity.this,NewDeletable.class));
-                    finish();
+                    //MarkerOptions markerOptions = new MarkerOptions().position(latLng).title("KRK");
+                    mMap.animateCamera(CameraUpdateFactory.newLatLng(currentLocation));
+                    mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLocation,16));
+                    //googleMap.addMarker(markerOptions);
+                    mMap.addMarker(new MarkerOptions().position(currentLocation).title("marker1"));
+
+
+
+                    //                    startActivity(new Intent(MapsActivity.this,NewDeletable.class));
+//                    finish();
                 }
 
                 Toast.makeText(MapsActivity.this,lat+" "+log,Toast.LENGTH_SHORT).show();
@@ -117,21 +126,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
     }
 
+//    @Override
+//    protected void onPause() {
+//        super.onPause();
+//        if (locationManager != null){
+//        }
+//    }
 
-    /**
-     * Manipulates the map once available.
-     * This callback is triggered when the map is ready to be used.
-     * This is where we can add markers or lines, add listeners or move the camera. In this case,
-     * we just add a marker near Sydney, Australia.
-     * If Google Play services is not installed on the device, the user will be prompted to install
-     * it inside the SupportMapFragment. This method will only be triggered once the user has
-     * installed Google Play services and returned to the app.
-     */
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         mMap.clear();
-        mMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
+        //mMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
 
         // Add a marker in Sydney and move the camera
 //        LatLng krk = new LatLng(31.1816995,74.0909306);

@@ -1,6 +1,4 @@
 package com.example.OnlineRescueSystem;
-
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -13,7 +11,6 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
 import android.widget.Toast;
-
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -54,34 +51,27 @@ public class AccessingLocation extends FragmentActivity implements OnMapReadyCal
         task.addOnSuccessListener(new OnSuccessListener<Location>() {
             @Override
             public void onSuccess(Location location) {
-
                 if (location != null){
 
                     mlocation = location;
                     latitude = mlocation.getLatitude();
                     logitude = mlocation.getLongitude();
 
-                    Toast.makeText(getApplicationContext(),mlocation.getLatitude()+" "+mlocation.getLongitude(),
-                            Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(),"Your location",Toast.LENGTH_LONG).show();
+
+//                    Toast.makeText(getApplicationContext(),mlocation.getLatitude()+" "+mlocation.getLongitude(),
+//                            Toast.LENGTH_LONG).show();
 //                     finish();
                     SupportMapFragment supportMapFragment = (SupportMapFragment) getSupportFragmentManager()
                             .findFragmentById(R.id.map);
                     supportMapFragment.getMapAsync(AccessingLocation.this);
                 }else{
-                    Toast.makeText(getApplicationContext(),"nothing ",
+                    Toast.makeText(getApplicationContext(),"on your location and try again ",
                             Toast.LENGTH_LONG).show();
                 }
-
-//                Intent changeIntent1 = new Intent(AccessingLocation.this, AccidentType.class);
-//                    changeIntent1.putExtra("longitude",""+logitude);
-//                    changeIntent1.putExtra("latitude",""+latitude);
-//                AccessingLocation.this.startActivity(changeIntent1);
-
             }
 
         });
-
-
     }
 
 
@@ -90,7 +80,7 @@ public class AccessingLocation extends FragmentActivity implements OnMapReadyCal
         LatLng latLng = new LatLng(mlocation.getLatitude(),mlocation.getLongitude());
         //MarkerOptions markerOptions = new MarkerOptions().position(latLng).title("KRK");
         googleMap.animateCamera(CameraUpdateFactory.newLatLng(latLng));
-        googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,18));
+        googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,16));
         //googleMap.addMarker(markerOptions);
         googleMap.addMarker(new MarkerOptions().position(latLng).title("marker1"));
 

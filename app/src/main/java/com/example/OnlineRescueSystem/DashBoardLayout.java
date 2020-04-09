@@ -21,6 +21,8 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.OnlineRescueSystem.Model.Registration;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -30,19 +32,31 @@ public class DashBoardLayout extends AppCompatActivity implements View.OnClickLi
     private static final int Request_Call = 1;
     public String accidentType ="";
 
+    private FirebaseAuth mAuth;
+    private FirebaseAuth.AuthStateListener firebaseAuthListener;
+    private FirebaseUser mUser;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dash_board);
 
-        leftLowerViewForMap = findViewById(R.id.leftLoweViewForMap);
-        leftLowerViewForMap.setOnClickListener(new View.OnClickListener() {
+        mAuth = FirebaseAuth.getInstance();
+        mUser = mAuth.getCurrentUser();
+        firebaseAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(DashBoardLayout.this, MainActivity.class);
-                startActivity(intent);
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                mUser = firebaseAuth.getCurrentUser();
+                if (mUser != null) {
+                } else {
+
+                    startActivity(new Intent(DashBoardLayout.this,LoginScreen.class));
+                }
             }
-        });
+        };
+
+
     }
 
     @Override
@@ -101,7 +115,7 @@ public class DashBoardLayout extends AppCompatActivity implements View.OnClickLi
                 Toast.makeText(DashBoardLayout.this, " Press Yes on notification if you need 1122", Toast.LENGTH_LONG).show();
 
 
-                 finish();
+                finish();
             }
         });
 
@@ -129,6 +143,11 @@ public class DashBoardLayout extends AppCompatActivity implements View.OnClickLi
         }
     }
 
+    public void onMap(View view){
+        startActivity(new Intent(DashBoardLayout.this,AccessingLocation.class));
+//        finish();
+    }
+
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -152,16 +171,31 @@ public class DashBoardLayout extends AppCompatActivity implements View.OnClickLi
         return super.onCreateOptionsMenu(menu);
     }
 
-    
+
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()){
             case R.id.action_profile:
 
-               Intent intent3 = new Intent(DashBoardLayout.this,ProfileActivity.class);
+                Intent intent3 = new Intent(DashBoardLayout.this,ProfileActivity.class);
                 startActivity(intent3);
-               break;
+                break;
         }
         return super.onOptionsItemSelected(item);
     }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        mAuth.addAuthStateListener(firebaseAuthListener);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if(firebaseAuthListener != null){
+            mAuth.removeAuthStateListener(firebaseAuthListener);
+        }
+    }
+
 }
