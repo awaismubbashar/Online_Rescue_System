@@ -10,6 +10,7 @@ import android.graphics.Paint;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -51,6 +52,9 @@ public class RegisterActivity extends AppCompatActivity {
     private StorageReference mStorageRef;
 
     private TextView towardsLoginTextView;
+    private static final String TAG = "RegisterActivity";
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,7 +81,9 @@ public class RegisterActivity extends AppCompatActivity {
             }
         };
         mStorageRef = FirebaseStorage.getInstance().getReference();
-        mPostDatabase = FirebaseDatabase.getInstance().getReference().child("Caller Data");
+
+
+        mPostDatabase = FirebaseDatabase.getInstance().getReference("Caller Data");
 
         imageRegister = findViewById(R.id.profileImage_register);
         FullnameRegister = findViewById(R.id.nameEditTextID_register);
@@ -124,8 +130,7 @@ public class RegisterActivity extends AppCompatActivity {
                                 if (!task.isSuccessful()) {
                                     Toast.makeText(RegisterActivity.this, "something went wrong here...", Toast.LENGTH_LONG)
                                             .show();
-                                } else {
-                                    startPosting();
+                                } else { startPosting();
                                 }
                             }
                         });
@@ -161,6 +166,7 @@ public class RegisterActivity extends AppCompatActivity {
         if (!TextUtils.isEmpty(mName) && !TextUtils.isEmpty(mNumber)
                 && mImageUri != null && !TextUtils.isEmpty(maddress)){
 
+           final int i = mEmail.indexOf(".");
 
             // start uploading...
             StorageReference filepath = mStorageRef.child("Caller Data")
@@ -171,7 +177,8 @@ public class RegisterActivity extends AppCompatActivity {
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
 
                     Uri downloadUrl = taskSnapshot.getUploadSessionUri();
-                    DatabaseReference newPost = mPostDatabase.push();
+                    DatabaseReference newPost = mPostDatabase.child(mEmail.substring(0,i)).push();
+                    Log.d(TAG, "register: "+mAuth.getUid());
 
                     Map<String, String> dataToSave = new HashMap<>();
                     dataToSave.put("phoneNumber", mNumber);
@@ -180,15 +187,13 @@ public class RegisterActivity extends AppCompatActivity {
                     dataToSave.put("email", mEmail);
                     dataToSave.put("image", downloadUrl.toString());
                     dataToSave.put("timeStamp", String.valueOf(java.lang.System.currentTimeMillis()));
-//                    dataToSave.put("userId", mUser.getUid());
+                    dataToSave.put("userId", mUser.getUid());
 
                     newPost.setValue(dataToSave);
                     mProgress.dismiss();
                     Toast.makeText(RegisterActivity.this,"registered ",Toast.LENGTH_LONG).show();
 
-
-                    Intent ntent = new Intent(RegisterActivity.this, LoginScreen.class);
-                    ntent.putExtra("phone Number",mNumber);
+                    Intent ntent = new Intent(RegisterActivity.this, DashBoardLayout.class);
                     startActivity(ntent);
                     finish();
                 }

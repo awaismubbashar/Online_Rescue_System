@@ -19,6 +19,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 public class LoginScreen extends AppCompatActivity {
 
@@ -27,7 +28,8 @@ public class LoginScreen extends AppCompatActivity {
     private EditText mEmail,mPassword;
 
     private FirebaseAuth mAuth;
-
+    private FirebaseAuth.AuthStateListener firebaseAuthListener;
+    private FirebaseUser mUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +41,20 @@ public class LoginScreen extends AppCompatActivity {
 
         setContentView(R.layout.activity_login_screen);
         getSupportActionBar().hide();
+
+        mAuth = FirebaseAuth.getInstance();
+        mUser = mAuth.getCurrentUser();
+        firebaseAuthListener = new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                if (user != null){
+                    startActivity(new Intent(LoginScreen.this,DashBoardLayout.class));
+                    finish();
+                    return;
+                }
+            }
+        };
 
         mEmail = findViewById(R.id.email_login);
         mPassword = findViewById(R.id.password_login);
@@ -97,5 +113,17 @@ public class LoginScreen extends AppCompatActivity {
                 }
             }
         });
+    } // end of onCreate method
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        mAuth.addAuthStateListener(firebaseAuthListener);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        mAuth.removeAuthStateListener(firebaseAuthListener);
     }
 }
