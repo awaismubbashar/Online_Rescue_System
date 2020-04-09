@@ -39,7 +39,7 @@ public class DashBoardLayout extends AppCompatActivity implements View.OnClickLi
         leftLowerViewForMap.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(DashBoardLayout.this, MainActivity.class);
+                Intent intent = new Intent(DashBoardLayout.this, MapsActivity.class);
                 startActivity(intent);
             }
         });
