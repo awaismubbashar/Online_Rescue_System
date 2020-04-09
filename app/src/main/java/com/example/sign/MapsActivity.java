@@ -71,8 +71,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 mMap.moveCamera(CameraUpdateFactory.newLatLng(currentLocation));
 
                 if(lat> 20.0 && log >20.0){
+                    Intent intent = getIntent();
+                    String accident1 = intent.getStringExtra("Accident Type");
                     myRef.child("lat").setValue(lat);
-                    myRef.child("lat").setValue(log);
+                    myRef.child("log").setValue(log);
+
                     startActivity(new Intent(MapsActivity.this,NewDeletable.class));
                     finish();
                 }
@@ -109,10 +112,36 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
             return;
         } else {
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 2000, 0, locationListener);
         }
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        LocationListener locationListener = new LocationListener() {
+            @Override
+            public void onLocationChanged(Location location) {
+
+            }
+
+            @Override
+            public void onStatusChanged(String provider, int status, Bundle extras) {
+
+            }
+
+            @Override
+            public void onProviderEnabled(String provider) {
+
+            }
+
+            @Override
+            public void onProviderDisabled(String provider) {
+
+            }
+        };
+        locationManager.removeUpdates(locationListener);
+    }
 
     /**
      * Manipulates the map once available.
@@ -140,6 +169,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             if(ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
+                try {
+                    locationManager.wait(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
                 locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
             }
         }

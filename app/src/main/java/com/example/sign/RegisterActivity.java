@@ -177,7 +177,7 @@ public class RegisterActivity extends AppCompatActivity {
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
 
                     Uri downloadUrl = taskSnapshot.getUploadSessionUri();
-                    DatabaseReference newPost = mPostDatabase.child(mEmail.substring(0,i)).push();
+                    DatabaseReference newPost = mPostDatabase.child(mEmail.substring(0,i)).child("profile detail");
                     Log.d(TAG, "register: "+mAuth.getUid());
 
                     Map<String, String> dataToSave = new HashMap<>();
@@ -187,7 +187,7 @@ public class RegisterActivity extends AppCompatActivity {
                     dataToSave.put("email", mEmail);
                     dataToSave.put("image", downloadUrl.toString());
                     dataToSave.put("timeStamp", String.valueOf(java.lang.System.currentTimeMillis()));
-                    dataToSave.put("userId", mUser.getUid());
+                  //  dataToSave.put("userId", mUser.getUid());
 
                     newPost.setValue(dataToSave);
                     mProgress.dismiss();

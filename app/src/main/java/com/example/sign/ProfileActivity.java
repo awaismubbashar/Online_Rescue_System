@@ -51,7 +51,7 @@ public class ProfileActivity extends AppCompatActivity {
         mUser = mAuth.getCurrentUser();
         String subEmail = mUser.getEmail();
         database = FirebaseDatabase.getInstance();
-        myRef = database.getReference("Caller Data").child(subEmail.substring(0,subEmail.indexOf(".")));
+        myRef = database.getReference("Caller Data").child(subEmail.substring(0,subEmail.indexOf("."))).child("profile detail");
 
         mProgress = new ProgressDialog(this);
         namePofile = findViewById(R.id.CNICEditTextID_profile);
