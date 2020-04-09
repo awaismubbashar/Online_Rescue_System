@@ -1,4 +1,4 @@
-package com.example.sign;
+package com.example.OnlineRescueSystem;
 
 import androidx.appcompat.app.AppCompatActivity;
 

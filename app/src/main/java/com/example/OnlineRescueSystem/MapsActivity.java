@@ -1,12 +1,6 @@
-package com.example.sign;
-
-import androidx.annotation.NonNull;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-import androidx.fragment.app.FragmentActivity;
+package com.example.OnlineRescueSystem;
 
 import android.Manifest;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
@@ -15,7 +9,11 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.example.sign.R;
+import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.FragmentActivity;
+
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -27,7 +25,6 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.storage.StorageReference;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
@@ -54,7 +51,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mUser = mAuth.getCurrentUser();
         String subEmail = mUser.getEmail();
         database = FirebaseDatabase.getInstance();
-        myRef = database.getReference("Caller Data").child(subEmail.substring(0,subEmail.indexOf(".")));
+        myRef = database.getReference("Caller Data").child(subEmail.substring(0,subEmail.indexOf("."))).child("quaerty");
         locationManager = (LocationManager) this.getSystemService(LOCATION_SERVICE);
         locationListener = new LocationListener() {
 
@@ -67,18 +64,19 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                 LatLng currentLocation = new LatLng(lat,log);
                 mMap.addMarker(new MarkerOptions().position(currentLocation).title("marker1"));
+//                mMap.moveCamera(CameraUpdateFactory.newLatLng(currentLocation,17));
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation,17));
 
-                mMap.moveCamera(CameraUpdateFactory.newLatLng(currentLocation));
-
-                if(lat> 20.0 && log >20.0){
-                    Intent intent = getIntent();
-                    String accident1 = intent.getStringExtra("Accident Type");
-                    myRef.child("lat").setValue(lat);
-                    myRef.child("log").setValue(log);
-
-                    startActivity(new Intent(MapsActivity.this,NewDeletable.class));
-                    finish();
-                }
+//                if(lat> 20.0 && log >20.0){
+//                    Intent intent = getIntent();
+//                    String accident1 = intent.getStringExtra("Accident Type");
+//                    String time =  String.valueOf(java.lang.System.currentTimeMillis());
+//                    Callinfo callinfo = new Callinfo(""+lat,""+log,""+accident1,""+time);
+//                    myRef.setValue(callinfo);
+//
+//                    startActivity(new Intent(MapsActivity.this,NewDeletable.class));
+//                    finish();
+//                }
 
                 Toast.makeText(MapsActivity.this,lat+" "+log,Toast.LENGTH_SHORT).show();
                 Log.d("Location",location.toString());
@@ -116,32 +114,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
     }
 
-    @Override
-    protected void onPause() {
-        super.onPause();
-        LocationListener locationListener = new LocationListener() {
-            @Override
-            public void onLocationChanged(Location location) {
-
-            }
-
-            @Override
-            public void onStatusChanged(String provider, int status, Bundle extras) {
-
-            }
-
-            @Override
-            public void onProviderEnabled(String provider) {
-
-            }
-
-            @Override
-            public void onProviderDisabled(String provider) {
-
-            }
-        };
-        locationManager.removeUpdates(locationListener);
-    }
 
     /**
      * Manipulates the map once available.

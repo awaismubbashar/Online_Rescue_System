@@ -1,4 +1,4 @@
-package com.example.sign;
+package com.example.OnlineRescueSystem;
 
 import android.content.Context;
 

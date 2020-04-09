@@ -1,10 +1,10 @@
-package com.example.sign;
+package com.example.OnlineRescueSystem;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 
-import com.example.sign.R;
+import com.example.OnlineRescueSystem.R;
 
 public class NewDeletable extends AppCompatActivity {
 

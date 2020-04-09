@@ -1,4 +1,4 @@
-package com.example.sign;
+package com.example.OnlineRescueSystem;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -10,7 +10,6 @@ import android.graphics.Paint;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -177,8 +176,7 @@ public class RegisterActivity extends AppCompatActivity {
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
 
                     Uri downloadUrl = taskSnapshot.getUploadSessionUri();
-                    DatabaseReference newPost = mPostDatabase.child(mEmail.substring(0,i)).child("profile detail");
-                    Log.d(TAG, "register: "+mAuth.getUid());
+                    DatabaseReference newPost = mPostDatabase.child(mEmail.substring(0,i)).child("profile detail").child("wese");
 
                     Map<String, String> dataToSave = new HashMap<>();
                     dataToSave.put("phoneNumber", mNumber);

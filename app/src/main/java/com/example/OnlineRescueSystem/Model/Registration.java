@@ -1,4 +1,4 @@
-package com.example.sign.Model;
+package com.example.OnlineRescueSystem.Model;
 
 public class Registration {
 
