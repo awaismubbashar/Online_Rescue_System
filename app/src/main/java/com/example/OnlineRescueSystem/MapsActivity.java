@@ -34,12 +34,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private GoogleMap mMap;
     private LocationManager locationManager;
     private LocationListener locationListener;
-    Marker marker;
     private DatabaseReference myRef;
     private FirebaseDatabase database;
     private FirebaseAuth mAuth;
     private FirebaseUser mUser;
-
+    private static final String TAG = "MapsActivity";
+    
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -71,23 +71,21 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 mMap.moveCamera(CameraUpdateFactory.newLatLng(currentLocation));
 
                 if(lat> 20.0 && log >20.0){
-                    Intent intent = getIntent();
-                    String accident1 = intent.getStringExtra("Accident Type");
+                    //Callinfo callinfo = new Callinfo();
+                    String accident1 =  new Callinfo().getCallType();
+
+                    Log.d(TAG, "onLocationChanged: "+accident1);
+                    //Toast.makeText(MapsActivity.this,""+accident1,Toast.LENGTH_LONG).show();
+
                     String time =  String.valueOf(java.lang.System.currentTimeMillis());
-                    Callinfo callinfo = new Callinfo(""+lat,""+log,""+accident1,""+time);
-                    myRef.setValue(callinfo);
+                    Callinfo callinfo1 = new Callinfo(""+lat,""+log,"checkup",""+time);
+                    myRef.setValue(callinfo1);
                     locationManager.removeUpdates(locationListener);
 
-                    //MarkerOptions markerOptions = new MarkerOptions().position(latLng).title("KRK");
                     mMap.animateCamera(CameraUpdateFactory.newLatLng(currentLocation));
                     mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLocation,16));
-                    //googleMap.addMarker(markerOptions);
                     mMap.addMarker(new MarkerOptions().position(currentLocation).title("marker1"));
 
-
-
-                    //                    startActivity(new Intent(MapsActivity.this,NewDeletable.class));
-//                    finish();
                 }
 
                 Toast.makeText(MapsActivity.this,lat+" "+log,Toast.LENGTH_SHORT).show();

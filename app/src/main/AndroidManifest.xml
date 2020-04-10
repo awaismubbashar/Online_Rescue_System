@@ -16,7 +16,6 @@
         <activity android:name=".AccessingLocation">
 
         </activity>
-        <activity android:name=".NewDeletable" />
         <activity android:name=".ProfileActivity" />
         <activity android:name=".RegisterActivity" />
         <activity android:name=".LoginScreen" />

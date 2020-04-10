@@ -14,12 +14,14 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.example.OnlineRescueSystem.Model.Callinfo;
 import com.example.OnlineRescueSystem.Model.Registration;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -35,7 +37,7 @@ public class DashBoardLayout extends AppCompatActivity implements View.OnClickLi
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener firebaseAuthListener;
     private FirebaseUser mUser;
-
+    private static final String TAG = "DashBoardLayout";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,7 +92,6 @@ public class DashBoardLayout extends AppCompatActivity implements View.OnClickLi
             case (R.id.rightLoweViewForCall):
                 open("Simple call");
                 break;
-
         }
     }
 
@@ -112,10 +113,7 @@ public class DashBoardLayout extends AppCompatActivity implements View.OnClickLi
 
             public void onClick(DialogInterface dialog, int which) {
                 Toast.makeText(DashBoardLayout.this, "You clicked No button", Toast.LENGTH_SHORT).show();
-                Toast.makeText(DashBoardLayout.this, " Press Yes on notification if you need 1122", Toast.LENGTH_LONG).show();
-
-
-                finish();
+                Toast.makeText(DashBoardLayout.this, " Press Yes if you need 1122", Toast.LENGTH_LONG).show();
             }
         });
 
@@ -126,6 +124,10 @@ public class DashBoardLayout extends AppCompatActivity implements View.OnClickLi
     protected void makeCall() {
 
         Intent callIntent = new Intent(Intent.ACTION_CALL);
+        Callinfo callinfo = new Callinfo();
+        callinfo.setCallType(accidentType);
+        Log.d(TAG, "onLoc2: "+callinfo.getCallType());
+
         callIntent.setData(Uri.parse("tel:03451012867"));
 
         if (ContextCompat.checkSelfPermission(DashBoardLayout.this,android.Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
@@ -133,19 +135,22 @@ public class DashBoardLayout extends AppCompatActivity implements View.OnClickLi
 
             }
         }else {
-
+            Callinfo callinfo2 = new Callinfo();
+            callinfo.setCallType(accidentType);
+            Log.d(TAG, "onLoc: "+callinfo.getCallType());
             startActivity(new Intent(Intent.ACTION_CALL, Uri.parse("tel:03451012867")));
-            Intent intent = new Intent(DashBoardLayout.this,MapsActivity.class);
-            intent.putExtra("Accident Type",accidentType);
-            startActivity(intent);
-            finish();
+            
+//            Intent intent = new Intent(DashBoardLayout.this,MapsActivity.class);
+//            intent.putExtra("Accident Type",accidentType);
+//            startActivity(intent);
+//            finish();
 
         }
     }
 
     public void onMap(View view){
-        startActivity(new Intent(DashBoardLayout.this,AccessingLocation.class));
-//        finish();
+        startActivity(new Intent(DashBoardLayout.this,MapsActivity.class));
+    // don't finish here
     }
 
     @Override
@@ -157,7 +162,6 @@ public class DashBoardLayout extends AppCompatActivity implements View.OnClickLi
                 makeCall();
             }else {
                 Toast.makeText(this,"Permission denied",Toast.LENGTH_SHORT);
-
 
             }
         }

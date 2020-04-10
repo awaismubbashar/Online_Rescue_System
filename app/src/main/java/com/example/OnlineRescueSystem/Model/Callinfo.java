@@ -4,7 +4,7 @@ public class Callinfo {
 
     private String lat;
     private String log;
-    private String callType;
+    public String callType;
     private String date;
 
 
