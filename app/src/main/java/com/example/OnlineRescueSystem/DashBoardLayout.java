@@ -124,10 +124,6 @@ public class DashBoardLayout extends AppCompatActivity implements View.OnClickLi
     protected void makeCall() {
 
         Intent callIntent = new Intent(Intent.ACTION_CALL);
-        Callinfo callinfo = new Callinfo();
-        callinfo.setCallType(accidentType);
-        Log.d(TAG, "onLoc2: "+callinfo.getCallType());
-
         callIntent.setData(Uri.parse("tel:03451012867"));
 
         if (ContextCompat.checkSelfPermission(DashBoardLayout.this,android.Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
@@ -135,21 +131,15 @@ public class DashBoardLayout extends AppCompatActivity implements View.OnClickLi
 
             }
         }else {
-            Callinfo callinfo2 = new Callinfo();
-            callinfo.setCallType(accidentType);
-            Log.d(TAG, "onLoc: "+callinfo.getCallType());
             startActivity(new Intent(Intent.ACTION_CALL, Uri.parse("tel:03451012867")));
-            
-//            Intent intent = new Intent(DashBoardLayout.this,MapsActivity.class);
-//            intent.putExtra("Accident Type",accidentType);
-//            startActivity(intent);
-//            finish();
-
         }
     }
 
     public void onMap(View view){
-        startActivity(new Intent(DashBoardLayout.this,MapsActivity.class));
+
+        Intent intent = new Intent(DashBoardLayout.this,MapsActivity.class);
+        intent.putExtra("Accident Type",accidentType);
+        startActivity(intent);
     // don't finish here
     }
 
