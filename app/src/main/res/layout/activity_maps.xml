@@ -1,9 +1,105 @@
 <?xml version="1.0" encoding="utf-8"?>
-<fragment xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:map="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/map"
-    android:name="com.google.android.gms.maps.SupportMapFragment"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".MapsActivity" />
+<androidx.constraintlayout.widget.ConstraintLayout
+xmlns:android="http://schemas.android.com/apk/res/android"
+xmlns:app="http://schemas.android.com/apk/res-auto"
+xmlns:tools="http://schemas.android.com/tools"
+android:layout_width="match_parent"
+android:layout_height="match_parent"
+tools:context=".MapsActivity">
+
+    <!--        <TextView-->
+<!--            android:id="@+id/estimateddistanceAcc"-->
+<!--            android:layout_width="@dimen/activity_map_edittext_width"-->
+<!--            android:layout_height="@dimen/activity_map_edittext_hight"-->
+<!--            android:text="0 Km (No Request)"-->
+<!--            android:textAlignment="center"-->
+<!--            android:paddingTop="@dimen/activity_map_edittext_padding_top"-->
+<!--            app:layout_constraintBottom_toTopOf="@+id/map"-->
+<!--            app:layout_constraintEnd_toEndOf="parent"-->
+<!--            app:layout_constraintHorizontal_bias="0.91"-->
+<!--            app:layout_constraintStart_toStartOf="parent"-->
+<!--            app:layout_constraintTop_toTopOf="parent"-->
+<!--            android:background="@drawable/border_for_map"-->
+<!--            app:layout_constraintVertical_bias="0.20000003" />-->
+
+
+    <!--        <TextView-->
+<!--            android:id="@+id/estimatedTimeAcc"-->
+<!--            android:layout_width="@dimen/activity_map_edittext_width"-->
+<!--            android:layout_height="@dimen/activity_map_edittext_hight"-->
+<!--            android:text="0 sec (No Request)"-->
+<!--            android:textAlignment="center"-->
+<!--            android:paddingTop="@dimen/activity_map_edittext_padding_top"-->
+<!--            app:layout_constraintBottom_toTopOf="@+id/map"-->
+<!--            app:layout_constraintEnd_toEndOf="parent"-->
+<!--            app:layout_constraintHorizontal_bias="0.91"-->
+<!--            android:background="@drawable/border_for_map"-->
+<!--            app:layout_constraintStart_toStartOf="parent"-->
+<!--            app:layout_constraintTop_toBottomOf="@+id/estimateddistanceAcc"-->
+<!--            app:layout_constraintVertical_bias="0.15000003" />-->
+
+
+    <TextView
+        android:id="@+id/distanceLocation"
+        android:layout_width="@dimen/activity_map_edittext_width"
+        android:layout_height="@dimen/activity_map_edittext_hight"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/border_for_map"
+        android:paddingTop="@dimen/activity_map_edittext_padding_top"
+        android:text="Distance  "
+        android:textAlignment="center"
+        app:layout_constraintBottom_toTopOf="@+id/map"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.496"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.365" />
+
+    <TextView
+        android:id="@+id/estimatedTimeLocation"
+        android:layout_width="@dimen/activity_map_edittext_width"
+        android:layout_height="@dimen/activity_map_edittext_hight"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/border_for_map"
+        android:paddingTop="@dimen/activity_map_edittext_padding_top"
+        android:text="Estimated Time"
+        android:textAlignment="center"
+        app:layout_constraintBottom_toTopOf="@+id/map"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.496"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/distanceLocation"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <TextView
+        android:id="@+id/mapTitleID"
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:layout_marginTop="30dp"
+        android:layout_marginBottom="50dp"
+        android:text="Live Location"
+        android:textAlignment="center"
+        android:textColor="@color/colorPrimary"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/distanceLocation"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <fragment
+        android:id="@+id/map"
+        android:name="com.google.android.gms.maps.SupportMapFragment"
+        android:layout_width="407dp"
+        android:layout_height="511dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.965"></fragment>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

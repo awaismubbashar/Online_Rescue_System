@@ -22,6 +22,24 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.127" />
 
+    //plus icon below profile picture
+
+    <ImageView
+        android:id="@+id/plusIcon_profile"
+        android:layout_width="37dp"
+        android:layout_height="38dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        app:layout_constraintBottom_toBottomOf="@+id/profileImage_register"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.601"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0"
+        app:srcCompat="@drawable/ic_add_circle_black_24dp"
+        tools:ignore="MissingConstraints" />
+
     <EditText
         android:id="@+id/nameEditTextID_register"
         android:layout_width="@dimen/activity_register_edittext_width"

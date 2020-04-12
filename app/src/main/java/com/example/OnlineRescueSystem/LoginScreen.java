@@ -1,8 +1,5 @@
 package com.example.OnlineRescueSystem;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.graphics.Paint;
 import android.os.Bundle;
@@ -14,6 +11,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -44,7 +44,6 @@ public class LoginScreen extends AppCompatActivity {
 
         mAuth = FirebaseAuth.getInstance();
         mUser = mAuth.getCurrentUser();
-        mAuth = FirebaseAuth.getInstance();
         firebaseAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
@@ -87,22 +86,22 @@ public class LoginScreen extends AppCompatActivity {
                 if (email != null && password != null) {
                     if(!TextUtils.isEmpty(mEmail.getText().toString())
                             && !TextUtils.isEmpty(mPassword.getText().toString())){
-                    mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(LoginScreen.this, new OnCompleteListener<AuthResult>() {
-                        @Override
-                        public void onComplete(@NonNull Task<AuthResult> task) {
-                            if (!task.isSuccessful()) {
-                                Toast.makeText(LoginScreen.this, "Not registered or internet problem", Toast.LENGTH_LONG)
-                                        .show();
+                        mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(LoginScreen.this, new OnCompleteListener<AuthResult>() {
+                            @Override
+                            public void onComplete(@NonNull Task<AuthResult> task) {
+                                if (!task.isSuccessful()) {
+                                    Toast.makeText(LoginScreen.this, "Not registered or internet problem", Toast.LENGTH_LONG)
+                                            .show();
 
-                            } else {
-                                Toast.makeText(LoginScreen.this, "Login Success", Toast.LENGTH_LONG)
-                                        .show();
-                                Intent intent = new Intent(LoginScreen.this, DashBoardLayout.class);
-                                startActivity(intent);
-                                finish();
+                                } else {
+                                    Toast.makeText(LoginScreen.this, "Login Success", Toast.LENGTH_LONG)
+                                            .show();
+                                    Intent intent = new Intent(LoginScreen.this, DashBoardLayout.class);
+                                    startActivity(intent);
+                                    finish();
+                                }
                             }
-                        }
-                    });
+                        });
                     }else {
                         Toast.makeText(LoginScreen.this, "Fill all field first", Toast.LENGTH_LONG)
                                 .show();

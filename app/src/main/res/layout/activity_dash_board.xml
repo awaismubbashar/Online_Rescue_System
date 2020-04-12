@@ -265,6 +265,7 @@
 
     <ImageView
         android:id="@+id/leftLoweViewForMap"
+        android:onClick="onMap"
         android:layout_width="191dp"
         android:layout_height="65dp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -290,6 +291,7 @@
 
     <ImageView
         android:id="@+id/mapIcon"
+        android:onClick="onMap"
         android:layout_width="99dp"
         android:layout_height="53dp"
         android:src="@drawable/map"
