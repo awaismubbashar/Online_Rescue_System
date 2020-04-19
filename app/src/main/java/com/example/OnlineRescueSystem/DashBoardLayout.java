@@ -39,6 +39,8 @@ public class DashBoardLayout extends AppCompatActivity implements View.OnClickLi
     private FirebaseUser mUser;
     private static final String TAG = "DashBoardLayout";
 
+    private String neededEmergency;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,7 +54,6 @@ public class DashBoardLayout extends AppCompatActivity implements View.OnClickLi
                 mUser = firebaseAuth.getCurrentUser();
                 if (mUser != null) {
                 } else {
-
                     startActivity(new Intent(DashBoardLayout.this,LoginScreen.class));
                 }
             }
@@ -72,7 +73,7 @@ public class DashBoardLayout extends AppCompatActivity implements View.OnClickLi
                 open("Fire case");
                 break;
             case R.id.medicalImageAndLableCardViewID:
-                open("Medical case ");
+                open("Medical case");
                 break;
 
             case R.id.crimeImageAndLableCardViewID:
@@ -96,8 +97,7 @@ public class DashBoardLayout extends AppCompatActivity implements View.OnClickLi
     }
 
 
-    public void open(String type) {
-        accidentType = type;
+    public void open(final String type) {
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
         alertDialogBuilder.setMessage("Are you sure, You wanted to make a call to ::Rescue 1122::");
         alertDialogBuilder.setPositiveButton("yes",
@@ -105,6 +105,16 @@ public class DashBoardLayout extends AppCompatActivity implements View.OnClickLi
                     @Override
                     public void onClick(DialogInterface arg0, int arg1) {
 
+                        if (type == "RoadAccident case" || type == "Medical case" || type == "Crime case" || type == "Simple call"){
+                            neededEmergency = "Accident recovery team";
+                        }else if (type == "Building collapse case"){
+                            neededEmergency = "Rescue service";
+                        }else if (type == "drowning case"){
+                            neededEmergency = "life guard service";
+                        }else if (type == "Fire case"){
+                            neededEmergency = "Fire brigade";
+                        }
+                        accidentType = type;
                         makeCall();
                     }
                 });
@@ -124,21 +134,23 @@ public class DashBoardLayout extends AppCompatActivity implements View.OnClickLi
     protected void makeCall() {
 
         Intent callIntent = new Intent(Intent.ACTION_CALL);
-        callIntent.setData(Uri.parse("tel:03451012867"));
+        callIntent.setData(Uri.parse("tel:03048146310"));
 
         if (ContextCompat.checkSelfPermission(DashBoardLayout.this,android.Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(DashBoardLayout.this, new String[]{Manifest.permission.CALL_PHONE},Request_Call); {
 
             }
         }else {
-            startActivity(new Intent(Intent.ACTION_CALL, Uri.parse("tel:03451012867")));
+            startActivity(new Intent(Intent.ACTION_CALL, Uri.parse("tel:03048146310")));
         }
     }
 
     public void onMap(View view){
+        Log.d(TAG, "acc: "+accidentType);
 
         Intent intent = new Intent(DashBoardLayout.this,MapsActivity.class);
-        intent.putExtra("Accident Type",accidentType);
+        intent.putExtra("Accident",accidentType);
+        intent.putExtra("neededEmergency",neededEmergency);
         startActivity(intent);
         // don't finish here
     }

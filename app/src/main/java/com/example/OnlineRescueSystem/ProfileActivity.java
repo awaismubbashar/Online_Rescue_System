@@ -82,17 +82,23 @@ public class ProfileActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
+        // showing progress dialog
+        mProgress1.setMessage("please wait.. ");
+        mProgress1.show();
+
+        Log.d(TAG, "myref2: "+myRef);
+
+
         myRef.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                Log.d(TAG, "snapshot2: "+dataSnapshot);
+
                 Registration registration = dataSnapshot.getValue(Registration.class);
 
-                Log.d(TAG, "onChildAdded: "+registration);
+                Log.d(TAG, "classObject2: "+registration);
 
 
-                // showing progress dialog
-                mProgress1.setMessage("please wait.. ");
-                mProgress1.show();
 
                 //fetching data from database
                 mName = registration.getName();

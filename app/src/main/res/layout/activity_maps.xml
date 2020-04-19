@@ -7,38 +7,6 @@ android:layout_width="match_parent"
 android:layout_height="match_parent"
 tools:context=".MapsActivity">
 
-    <!--        <TextView-->
-<!--            android:id="@+id/estimateddistanceAcc"-->
-<!--            android:layout_width="@dimen/activity_map_edittext_width"-->
-<!--            android:layout_height="@dimen/activity_map_edittext_hight"-->
-<!--            android:text="0 Km (No Request)"-->
-<!--            android:textAlignment="center"-->
-<!--            android:paddingTop="@dimen/activity_map_edittext_padding_top"-->
-<!--            app:layout_constraintBottom_toTopOf="@+id/map"-->
-<!--            app:layout_constraintEnd_toEndOf="parent"-->
-<!--            app:layout_constraintHorizontal_bias="0.91"-->
-<!--            app:layout_constraintStart_toStartOf="parent"-->
-<!--            app:layout_constraintTop_toTopOf="parent"-->
-<!--            android:background="@drawable/border_for_map"-->
-<!--            app:layout_constraintVertical_bias="0.20000003" />-->
-
-
-    <!--        <TextView-->
-<!--            android:id="@+id/estimatedTimeAcc"-->
-<!--            android:layout_width="@dimen/activity_map_edittext_width"-->
-<!--            android:layout_height="@dimen/activity_map_edittext_hight"-->
-<!--            android:text="0 sec (No Request)"-->
-<!--            android:textAlignment="center"-->
-<!--            android:paddingTop="@dimen/activity_map_edittext_padding_top"-->
-<!--            app:layout_constraintBottom_toTopOf="@+id/map"-->
-<!--            app:layout_constraintEnd_toEndOf="parent"-->
-<!--            app:layout_constraintHorizontal_bias="0.91"-->
-<!--            android:background="@drawable/border_for_map"-->
-<!--            app:layout_constraintStart_toStartOf="parent"-->
-<!--            app:layout_constraintTop_toBottomOf="@+id/estimateddistanceAcc"-->
-<!--            app:layout_constraintVertical_bias="0.15000003" />-->
-
-
     <TextView
         android:id="@+id/distanceLocation"
         android:layout_width="@dimen/activity_map_edittext_width"
@@ -46,7 +14,7 @@ tools:context=".MapsActivity">
         android:layout_marginTop="20dp"
         android:background="@drawable/border_for_map"
         android:paddingTop="@dimen/activity_map_edittext_padding_top"
-        android:text="Distance  "
+        android:text="Distance (no request made) "
         android:textAlignment="center"
         app:layout_constraintBottom_toTopOf="@+id/map"
         app:layout_constraintEnd_toEndOf="parent"
@@ -62,7 +30,7 @@ tools:context=".MapsActivity">
         android:layout_marginTop="8dp"
         android:background="@drawable/border_for_map"
         android:paddingTop="@dimen/activity_map_edittext_padding_top"
-        android:text="Estimated Time"
+        android:text="Est.Time(no request made)"
         android:textAlignment="center"
         app:layout_constraintBottom_toTopOf="@+id/map"
         app:layout_constraintEnd_toEndOf="parent"
