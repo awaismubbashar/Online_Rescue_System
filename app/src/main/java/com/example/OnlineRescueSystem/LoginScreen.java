@@ -1,5 +1,6 @@
 package com.example.OnlineRescueSystem;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Paint;
 import android.os.Bundle;
@@ -26,6 +27,7 @@ public class LoginScreen extends AppCompatActivity {
     private TextView registerTextView;
     private Button loginButton;
     private EditText mEmail,mPassword;
+    private ProgressDialog mProgress;
 
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener firebaseAuthListener;
@@ -38,7 +40,7 @@ public class LoginScreen extends AppCompatActivity {
         //Hide Action bar and Title
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-
+        mProgress = new ProgressDialog(LoginScreen.this);
         setContentView(R.layout.activity_login_screen);
         getSupportActionBar().hide();
 
@@ -49,12 +51,10 @@ public class LoginScreen extends AppCompatActivity {
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 mUser = firebaseAuth.getCurrentUser();
                 if (mUser != null) {
-                    Toast.makeText(LoginScreen.this, "user sign in", Toast.LENGTH_LONG)
-                            .show();
                     startActivity(new Intent(LoginScreen.this,DashBoardLayout.class));
                     finish();
                 } else {
-                    Toast.makeText(LoginScreen.this, "Signed in or register first", Toast.LENGTH_LONG).show();
+                    Toast.makeText(LoginScreen.this, "Sign in or register first", Toast.LENGTH_LONG).show();
                 }
             }
         };
@@ -80,6 +80,9 @@ public class LoginScreen extends AppCompatActivity {
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                mProgress.setMessage("Make sure you have internet");
+                mProgress.show();
+
 
                 final String email = mEmail.getText().toString();
                 final String password = mPassword.getText().toString();
@@ -94,8 +97,6 @@ public class LoginScreen extends AppCompatActivity {
                                             .show();
 
                                 } else {
-                                    Toast.makeText(LoginScreen.this, "Login Success", Toast.LENGTH_LONG)
-                                            .show();
                                     Intent intent = new Intent(LoginScreen.this, DashBoardLayout.class);
                                     startActivity(intent);
                                     finish();
@@ -110,6 +111,7 @@ public class LoginScreen extends AppCompatActivity {
                     Toast.makeText(LoginScreen.this, "Fill all field first", Toast.LENGTH_LONG)
                             .show();
                 }
+                mProgress.dismiss();
             }
         });
     } // end of onCreate method

@@ -95,10 +95,7 @@ public class ProfileActivity extends AppCompatActivity {
                 Log.d(TAG, "snapshot2: "+dataSnapshot);
 
                 Registration registration = dataSnapshot.getValue(Registration.class);
-
                 Log.d(TAG, "classObject2: "+registration);
-
-
 
                 //fetching data from database
                 mName = registration.getName();

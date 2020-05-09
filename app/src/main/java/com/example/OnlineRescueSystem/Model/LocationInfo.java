@@ -2,31 +2,46 @@ package com.example.OnlineRescueSystem.Model;
 
 public class LocationInfo {
 
-    private String lat1;
-    private String log1;
+    private String lat;
+    private String log;
+    private String driverType;
 
     public LocationInfo(String lat, String log) {
-        this.lat1 = lat;
-        this.log1= log;
+        this.lat = lat;
+        this.log= log;
+    }
+
+    public LocationInfo(String lat, String log, String driverType) {
+        this.lat = lat;
+        this.log = log;
+        this.driverType = driverType;
+    }
+
+    public String getDriverType() {
+        return driverType;
+    }
+
+    public void setDriverType(String driverType) {
+        this.driverType = driverType;
     }
 
     public LocationInfo() {
     }
 
     public String getLat() {
-        return lat1;
+        return lat;
     }
 
     public void setLat(String lat) {
-        this.lat1 = lat;
+        this.lat = lat;
     }
 
     public String getLog() {
-        return log1;
+        return log;
     }
 
     public void setLog(String log) {
-        this.log1 = log;
+        this.log = log;
     }
 
 }

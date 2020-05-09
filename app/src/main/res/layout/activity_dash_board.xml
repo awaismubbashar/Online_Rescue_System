@@ -305,7 +305,7 @@
 
     <ImageView
         android:id="@+id/callIcon"
-        android:onClick="onClick"
+        android:onClick="onCall"
         android:layout_width="108dp"
         android:layout_height="54dp"
         android:src="@drawable/call"

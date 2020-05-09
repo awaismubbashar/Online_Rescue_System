@@ -1,5 +1,6 @@
 package com.example.OnlineRescueSystem;
 
+import androidx.annotation.LongDef;
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -20,6 +21,7 @@ import android.widget.Toast;
 import com.example.OnlineRescueSystem.Model.Callinfo;
 import com.example.OnlineRescueSystem.Model.LocationInfo;
 import com.example.OnlineRescueSystem.Model.Registration;
+import com.example.OnlineRescueSystem.Model.UserRequest;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -46,25 +48,22 @@ import java.util.HashMap;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
-    private GoogleMap mMap;
+    private GoogleMap mMap,mMap1;
     private LocationManager locationManager;
     private LocationListener locationListener;
-    private DatabaseReference myRef;
-    private DatabaseReference myRef1;
-    private DatabaseReference myRef2;
+    private DatabaseReference myRef, myRef1, myRef2, myRef3,myRef4,activeCase,activeCase2;
     private FirebaseDatabase database;
     private FirebaseAuth mAuth;
     private FirebaseUser mUser;
     private static final String TAG = "MapsActivity";
-    String selectedDriver,neededEmergency;
-    private double lat,log,latitude,longitude,km;
+    private String selectedDriver,neededEmergency,subEmail;
+    private static double lat,log,latitude,longitude,km;
     private ProgressDialog mProgress1;
-    String subEmail;
-
+    LatLng currentLocation;
     HashMap<Double,String> hashMap;
     HashMap<String,LatLng> driverLatLong;
     LocationInfo locationInfo ;
-
+    private String availed = "false";
     private TextView estimatedDistanceMap,estimatedTimeMap;
 
     @Override
@@ -90,10 +89,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         subEmail = mUser.getEmail();
         subEmail = subEmail.substring(0, subEmail.indexOf("."));
         database = FirebaseDatabase.getInstance();
-        myRef = database.getReference("Caller Data").child(subEmail).child("quaerty");
+//        myRef = database.getReference("Caller Data").child(subEmail).child("quaerty");
+        myRef = database.getReference("Active Case");
+        myRef4 = database.getReference("Active Case");
 
-
-        // this is how to delete child from firebase
+//         this is how to delete child from firebase
 //         myRef2 = database.getReference("Accident recovery team ").child("jazz9999@gmail").removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
 //             @Override
 //             public void onComplete(@NonNull Task<Void> task) {
@@ -106,82 +106,81 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 //
 //             }
 //         });
-         // this is how to delete child
+        // this is how to delete child
 
-        locationManager = (LocationManager) this.getSystemService(LOCATION_SERVICE);
-        locationListener = new LocationListener() {
-            @Override
-            public void onLocationChanged(Location location) {
+        Intent intent = getIntent();
+        availed = intent.getStringExtra("availed");
+        if (availed.equals("true")){
+            onStart();
+        }else
+        {
+            // when not availed
+            locationManager = (LocationManager) this.getSystemService(LOCATION_SERVICE);
+            locationListener = new LocationListener() {
+                @Override
+                public void onLocationChanged(Location location) {
 
-                lat = location.getLatitude();
-                log = location.getLongitude();
-                LatLng currentLocation = new LatLng(lat, log);
+                    lat = location.getLatitude();
+                    log = location.getLongitude();
+                    currentLocation = new LatLng(lat, log);
 
-                if (lat > 20.0 && log > 20.0) {
+                    if (lat > 20.0 && log > 20.0) {
+                        Intent intent = getIntent();
+                        String accident1 = intent.getStringExtra("Accident");
+                        neededEmergency = intent.getStringExtra("neededEmergency");
 
-                    Intent intent = getIntent();
-                    String accident1 = intent.getStringExtra("Accident");
-                    neededEmergency = intent.getStringExtra("neededEmergency");
-                    Log.d(TAG, "accident tpe: " + accident1);
+                        if (!accident1.isEmpty()) {
+                            currentLocation = new LatLng(lat, log);
+                            String time = String.valueOf(java.lang.System.currentTimeMillis());
+                            Callinfo callinfo1 = new Callinfo("" + lat, "" + log, "" + accident1, "" + time);
 
+                            //user location
+                            mMap.clear();
+                            mMap.addMarker(new MarkerOptions().position(currentLocation).title("you are here"));
+                            //user marker
 
-                    if (!accident1.isEmpty()) {
+                            onStartt();
+                            locationManager.removeUpdates(locationListener);
 
-                        String time = String.valueOf(java.lang.System.currentTimeMillis());
-                        Callinfo callinfo1 = new Callinfo("" + lat, "" + log, "" + accident1, "" + time);
+                        } else if (lat > 20 && log > 20) {
 
-                        double lat1 = 31.180263;
-                        double log1 = 74.094517;
+                            mMap.clear();
+                            mMap.addMarker(new MarkerOptions().position(currentLocation).title("you are here with no request"));
+                            locationManager.removeUpdates(locationListener);
 
-
-                        //user location
-                        mMap.animateCamera(CameraUpdateFactory.newLatLng(currentLocation));
-                        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 14));
-                        mMap.addMarker(new MarkerOptions().position(currentLocation).title("you are here"));
-                        onStartt();
-                        //user marker
-
-                        locationManager.removeUpdates(locationListener);
-
-                    } else if (lat > 20 && log > 20) {
-                        Log.d(TAG, "acci else2 ");
-                        mMap.animateCamera(CameraUpdateFactory.newLatLng(currentLocation));
-                        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 16));
-                        mMap.addMarker(new MarkerOptions().position(currentLocation).title("you are here with no request"));
-                        locationManager.removeUpdates(locationListener);
-
-                        // Log.d(TAG, "empty ");
+                            // Log.d(TAG, "empty ");
+                        }
                     }
+
                 }
+
+                @Override
+                public void onStatusChanged(String provider, int status, Bundle extras) {
+
+                }
+
+                @Override
+                public void onProviderEnabled(String provider) {
+
+                }
+
+                @Override
+                public void onProviderDisabled(String provider) {
+                }
+            };
+
+            if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                // TODO: Consider calling
+                //    Activity#requestPermissions
+                // here to request the missing permissions, and then overriding
+
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+                return;
+            } else {
+                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
             }
-
-            @Override
-            public void onStatusChanged(String provider, int status, Bundle extras) {
-
-            }
-
-            @Override
-            public void onProviderEnabled(String provider) {
-
-            }
-
-            @Override
-            public void onProviderDisabled(String provider) {
-            }
-        };
-
-        if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    Activity#requestPermissions
-            // here to request the missing permissions, and then overriding
-
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
-            return;
-        } else {
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
         }
-
-    }
+    }// when not availed
 
     // distance calculation
     private double distance(double lat1, double lon1, double lat2, double lon2) {
@@ -211,6 +210,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         mMap.clear();
+        LatLng newLocation = new LatLng(31.177167,74.105169);
+        mMap.animateCamera(CameraUpdateFactory.newLatLng(newLocation));
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(newLocation, 14));
+        mMap.addMarker(new MarkerOptions().position(newLocation).title("you are here"));
+
         //mMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
     }
 
@@ -231,13 +235,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     protected void onStartt() {
         super.onStart();
-        mProgress1.setMessage("selecting driver please wait...");
+        mProgress1.setMessage("Make sure location is on...");
         mProgress1.show();
 
-
-
         myRef1 = database.getReference(""+neededEmergency);
-        myRef1.addValueEventListener(new ValueEventListener() {
+        myRef1.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
@@ -256,47 +258,49 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         km = dis / 0.62137;
                         hashMap.put(km,email);
                         driverLatLong.put(email,latLng);
+                    }
+                    Double miniDistanceEmail = (Collections.min(hashMap.keySet()));
+                    selectedDriver = hashMap.get(miniDistanceEmail);
+
+                    myRef1.child(""+selectedDriver).addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            if (dataSnapshot.exists()){
+                                myRef1.child(""+selectedDriver).removeValue();
+                                UserRequest userRequest = new UserRequest(""+lat,""+log,""+selectedDriver);
+                                myRef4.child(subEmail).setValue(userRequest);
+
+                                UserRequest userRequest1 = new UserRequest(""+latitude,""+longitude,""+subEmail);
+                                myRef4.child(selectedDriver).setValue(userRequest1);
+                            }else {
+                                onStartt();
+                            }
+
                         }
 
-                    Double miniDistanceEmail = (Collections.min(hashMap.keySet()));
-                   selectedDriver = hashMap.get(miniDistanceEmail);
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+                            Log.d(TAG, "onDatachanged deleted ");
+                            onStartt();
+                        }
+                    });
 
-                   LocationInfo driverInfo = new LocationInfo(""+latitude,""+longitude);
-                   LocationInfo userInfo = new LocationInfo(""+lat,""+log);
-                   myRef2 = database.getReference(neededEmergency).child(selectedDriver);
+                    Log.d(TAG, "onDataChange: selected dr "+selectedDriver);
 
-                   //myRef2.child(selectedDriver).setValue(driverInfo);
-                   myRef2.child(subEmail).setValue(userInfo);
+                    LocationInfo driverInfo = new LocationInfo(""+latitude,""+longitude);
+                    LocationInfo userInfo = new LocationInfo(""+lat,""+log);
+                    myRef2 = database.getReference("ActiveDriver").child(selectedDriver);
+                    myRef2.child("user request").child(subEmail).setValue(userInfo);
 
-                    LatLng driverLocation = driverLatLong.get(selectedDriver);
-                    Log.d(TAG, "onLocationChanged6: "+driverLocation);
+                    //myRef4.child(""+subEmail).setValue(""+selectedDriver);
 
-                    mMap.animateCamera(CameraUpdateFactory.newLatLng(driverLocation));
-                    mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(driverLocation, 14));
-                    mMap.addMarker(new MarkerOptions().position(driverLocation).title("driver is here"));
-                    estimatedDistanceMap.setText(new DecimalFormat("##.####").format(km) + " km");
-                    if (km <= 1) {
-                        double time1 = km + 1;
-                        estimatedTimeMap.setText(new DecimalFormat("##.##").format(time1) + " min");
-                    } else if (km > 1 || km <= 2) {
-                        double time1 = km + 2;
-                        estimatedTimeMap.setText(new DecimalFormat("##.##").format(time1) + " min");
-                    } else if (km > 2 || km <= 4) {
-                        double time1 = km + 3;
-                        estimatedTimeMap.setText(new DecimalFormat("##.##").format(time1) + " min");
-                    } else if (km > 4 || km <= 10) {
-                        double time1 = km + 5;
-                        estimatedTimeMap.setText(new DecimalFormat("##.##").format(time1) + " min");
-                    } else if (km > 10) {
-                        double time1 = km + 6;
-                        estimatedTimeMap.setText(new DecimalFormat("##.##").format(time1) + " min");
-                    }
+                    onActive();
 
                 }else {
                     Toast.makeText(MapsActivity.this,"Try later! There is no driver available..",Toast.LENGTH_LONG).show();
+                    onActive();
                 }
                 mProgress1.dismiss();
-
             }
 
             @Override
@@ -307,5 +311,125 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         });
     }
 
+    public void estTime(){
+        if (km <= 1) {
+            double time1 = km + 1;
+            estimatedTimeMap.setText(new DecimalFormat("##.##").format(time1) + " min");
+        } else if (km > 1 || km <= 2) {
+            double time1 = km + 2;
+            estimatedTimeMap.setText(new DecimalFormat("##.##").format(time1) + " min");
+        } else if (km > 2 || km <= 4) {
+            double time1 = km + 3;
+            estimatedTimeMap.setText(new DecimalFormat("##.##").format(time1) + " min");
+        } else if (km > 4 || km <= 10) {
+            double time1 = km + 5;
+            estimatedTimeMap.setText(new DecimalFormat("##.##").format(time1) + " min");
+        } else if (km > 10) {
+            double time1 = km + 6;
+            estimatedTimeMap.setText(new DecimalFormat("##.##").format(time1) + " min");
+        }
+    }
+
+    public void onActive(){
+        myRef3 = database.getReference(neededEmergency+"fuck").child(""+selectedDriver);
+        Log.d(TAG, "onDataChange: ref3 "+myRef3);
+        myRef3.addValueEventListener(new ValueEventListener() {
+
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                if (dataSnapshot.exists()) {
+
+                    for (DataSnapshot child : dataSnapshot.getChildren()) {
+                        Log.d(TAG, "onDataChange: "+child);
+                        //locationInfo = child.getValue(LocationInfo.class);
+//                        latitude = Double.parseDouble(locationInfo.getLat());
+//                        loitude = Double.parseDouble(locationInfo.getLog());
+                    }
+
+                    double dis = distance(lat, log, latitude, longitude);
+                    km = dis / 0.62137;
+                    estimatedDistanceMap.setText(new DecimalFormat("##.####").format(km) + " km");
+                    estTime();
+
+                    LatLng driverLoc = new LatLng(latitude,longitude);
+
+                    mMap.clear();
+                    mMap.addMarker(new MarkerOptions().position(driverLoc).title("driver is here"));
+                    mMap.addMarker(new MarkerOptions().position(currentLocation).title("you are here"));
+                }
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        mProgress1.setMessage("please wait...");
+        mProgress1.show();
+        if (availed.equals("true")) {
+            activeCase = database.getReference("Active Case").child(subEmail);
+
+            activeCase.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                    if (dataSnapshot.exists()) {
+
+                        UserRequest userRequest1 = dataSnapshot.getValue(UserRequest.class);
+
+                        lat = Double.parseDouble(userRequest1.getLat());
+                        log = Double.parseDouble(userRequest1.getLog());
+                        currentLocation = new LatLng(lat, log);
+                        selectedDriver = (String) userRequest1.getEmail();
+                        mMap.clear();
+                        mMap.addMarker(new MarkerOptions().position(currentLocation).title("you are here with active request"));
+                        mProgress1.dismiss();
+                        activeCase2 = database.getReference("Active Case").child(""+selectedDriver);
+
+                        activeCase2.addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                                if (dataSnapshot.exists()) {
+                                    UserRequest userRequest1 = dataSnapshot.getValue(UserRequest.class);
+                                    userRequest1.getLog();
+                                    latitude = Double.parseDouble(userRequest1.getLat());
+                                    longitude = Double.parseDouble(userRequest1.getLog());
+                                    LatLng driverLtLng = new LatLng(latitude,longitude);
+                                    mMap.clear();
+                                    mMap.addMarker(new MarkerOptions().position(currentLocation).title("you are here with active request"));
+                                    mMap.addMarker(new MarkerOptions().position(driverLtLng).title("driver is here"));
+                                    double dis = distance(lat, log, latitude, longitude);
+                                    km = dis / 0.62137;
+                                    estimatedDistanceMap.setText(new DecimalFormat("##.####").format(km) + " km");
+                                    estTime();
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                            }
+                        });
+
+                    } else {
+                        Log.d(TAG, "onDataChange: not availed");
+                        mProgress1.dismiss();
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+                }
+            });
+        }else {
+            mProgress1.dismiss();
+        }
+    }
 }
 

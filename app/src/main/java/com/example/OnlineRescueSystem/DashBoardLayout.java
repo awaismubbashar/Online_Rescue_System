@@ -9,6 +9,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import android.Manifest;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -18,34 +19,52 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.OnlineRescueSystem.Model.Callinfo;
 import com.example.OnlineRescueSystem.Model.Registration;
+import com.example.OnlineRescueSystem.Model.UserRequest;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
 public class DashBoardLayout extends AppCompatActivity implements View.OnClickListener{
 
     private View leftLowerViewForMap;
     private static final int Request_Call = 1;
     public String accidentType ="";
-
+    private String subEmail;
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener firebaseAuthListener;
     private FirebaseUser mUser;
     private static final String TAG = "DashBoardLayout";
-
+    private DatabaseReference myRef,callerData;
+    private FirebaseDatabase database;
+    private boolean availed = false;
+    private ProgressDialog mProgress;
     private String neededEmergency;
+    private String selectedDriver;
+    private ImageView call;
+    private String phoneNumber = "tel:03048146310";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dash_board);
+        call = findViewById(R.id.callIcon);
 
+
+
+        mProgress = new ProgressDialog(DashBoardLayout.this);
         mAuth = FirebaseAuth.getInstance();
         mUser = mAuth.getCurrentUser();
         firebaseAuthListener = new FirebaseAuth.AuthStateListener() {
@@ -58,41 +77,47 @@ public class DashBoardLayout extends AppCompatActivity implements View.OnClickLi
                 }
             }
         };
+        Log.d(TAG, "onDataChange: availed1");
 
+    }//
 
+    public void onCall(View view){
+        if (availed){
+            makeCall();
+        }else {
+            open("Simple call");
+        }
     }
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.accidentImageAndLableCardViewID:
-                open("RoadAccident case");
-                break;
+        if (!availed) {
+            switch (v.getId()) {
+                case R.id.accidentImageAndLableCardViewID:
+                    open("RoadAccident case");
+                    break;
 
-            case R.id.fireImageAndLableCardViewID:
-                open("Fire case");
-                break;
-            case R.id.medicalImageAndLableCardViewID:
-                open("Medical case");
-                break;
+                case R.id.fireImageAndLableCardViewID:
+                    open("Fire case");
+                    break;
+                case R.id.medicalImageAndLableCardViewID:
+                    open("Medical case");
+                    break;
 
-            case R.id.crimeImageAndLableCardViewID:
-                open("Crime case");
-                break;
+                case R.id.crimeImageAndLableCardViewID:
+                    open("Crime case");
+                    break;
 
-            case R.id.drowningImageAndLableCardViewID:
-                open("drowning case");
-                break;
+                case R.id.drowningImageAndLableCardViewID:
+                    open("drowning case");
+                    break;
 
-            case (R.id.structureCollapseImageAndLableCardViewID):
-                open("Building collapse case");
-                break;
-            case (R.id.callIcon):
-                open("Simple call");
-                break;
-            case (R.id.rightLoweViewForCall):
-                open("Simple call");
-                break;
+                case (R.id.structureCollapseImageAndLableCardViewID):
+                    open("Building collapse case");
+                    break;
+            }
+        }else {
+            Toast.makeText(this, "You are already availed service so please wait or click on call icon", Toast.LENGTH_LONG).show();
         }
     }
 
@@ -134,25 +159,32 @@ public class DashBoardLayout extends AppCompatActivity implements View.OnClickLi
     protected void makeCall() {
 
         Intent callIntent = new Intent(Intent.ACTION_CALL);
-        callIntent.setData(Uri.parse("tel:03048146310"));
+        callIntent.setData(Uri.parse(phoneNumber));
 
         if (ContextCompat.checkSelfPermission(DashBoardLayout.this,android.Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(DashBoardLayout.this, new String[]{Manifest.permission.CALL_PHONE},Request_Call); {
 
             }
         }else {
-            startActivity(new Intent(Intent.ACTION_CALL, Uri.parse("tel:03048146310")));
+            startActivity(new Intent(Intent.ACTION_CALL, Uri.parse(phoneNumber)));
         }
     }
 
     public void onMap(View view){
         Log.d(TAG, "acc: "+accidentType);
-
-        Intent intent = new Intent(DashBoardLayout.this,MapsActivity.class);
-        intent.putExtra("Accident",accidentType);
-        intent.putExtra("neededEmergency",neededEmergency);
-        startActivity(intent);
-        // don't finish here
+        if (!availed){
+            Intent intent = new Intent(DashBoardLayout.this,MapsActivity.class);
+            intent.putExtra("Accident",accidentType);
+            intent.putExtra("availed","false");
+            intent.putExtra("neededEmergency",neededEmergency);
+            startActivity(intent);
+    }
+        else {
+            Intent intent = new Intent(DashBoardLayout.this,MapsActivity.class);
+            Log.d(TAG, "onMap: "+availed);
+            intent.putExtra("availed","true");
+            startActivity(intent);
+        }
     }
 
     @Override
@@ -193,15 +225,65 @@ public class DashBoardLayout extends AppCompatActivity implements View.OnClickLi
     @Override
     protected void onStart() {
         super.onStart();
+        mProgress.setMessage("please wait...");
+        mProgress.show();
+
+        Log.d(TAG, "onDataChange:t:");
+        subEmail = mUser.getEmail();
+        subEmail = subEmail.substring(0, subEmail.indexOf("."));
         mAuth.addAuthStateListener(firebaseAuthListener);
+
+        if (firebaseAuthListener != null) {
+            mAuth.removeAuthStateListener(firebaseAuthListener);
+
+            database = FirebaseDatabase.getInstance();
+            myRef = database.getReference("Active Case").child(subEmail);
+            myRef.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                    if (dataSnapshot.exists()) {
+
+                        UserRequest userRequest1 = dataSnapshot.getValue(UserRequest.class);
+
+                        selectedDriver = userRequest1.getEmail();
+                        availed = true;
+                        callerData = database.getReference("Caller Data").child(selectedDriver).child("profile detail").child("wese");
+
+                        callerData.addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                Registration registration = dataSnapshot.getValue(Registration.class);
+                                phoneNumber = "tel:"+(registration.getPhoneNumber());
+
+                            }
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                            }
+                        });
+
+                        mProgress.dismiss();
+                        Log.d(TAG, "onDataChange: "+selectedDriver);
+                    } else {
+                        Log.d(TAG, "onDataChange: not availed");
+                        mProgress.dismiss();
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
+
+        }
+
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        if(firebaseAuthListener != null){
-            mAuth.removeAuthStateListener(firebaseAuthListener);
-        }
     }
-
 }
+
