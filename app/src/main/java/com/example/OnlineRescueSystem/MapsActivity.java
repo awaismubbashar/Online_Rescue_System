@@ -136,7 +136,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                             //user location
                             mMap.clear();
-                            mMap.addMarker(new MarkerOptions().position(currentLocation).title("you are here"));
+                            mMap.addMarker(new MarkerOptions().position(currentLocation).title("YOU ARE HERE"));
                             //user marker
 
                             onStartt();
@@ -145,7 +145,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         } else if (lat > 20 && log > 20) {
 
                             mMap.clear();
-                            mMap.addMarker(new MarkerOptions().position(currentLocation).title("you are here with no request"));
+                            mMap.addMarker(new MarkerOptions().position(currentLocation).title("You are here with no request"));
                             locationManager.removeUpdates(locationListener);
 
                             // Log.d(TAG, "empty ");
@@ -212,8 +212,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.clear();
         LatLng newLocation = new LatLng(31.177167,74.105169);
         mMap.animateCamera(CameraUpdateFactory.newLatLng(newLocation));
-        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(newLocation, 14));
-        mMap.addMarker(new MarkerOptions().position(newLocation).title("you are here"));
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(newLocation, 15));
+        mMap.addMarker(new MarkerOptions().position(newLocation).title("YOU ARE HERE"));
 
         //mMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
     }
@@ -223,7 +223,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             if(ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
                 try {
-                    locationManager.wait(1000);
+                    locationManager.wait(0);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -351,11 +351,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     km = dis / 0.62137;
                     estimatedDistanceMap.setText(new DecimalFormat("##.####").format(km) + " km");
                     estTime();
-
                     LatLng driverLoc = new LatLng(latitude,longitude);
-
                     mMap.clear();
-                    mMap.addMarker(new MarkerOptions().position(driverLoc).title("driver is here"));
+                    mMap.addMarker(new MarkerOptions().position(driverLoc).title("driver is here").icon(BitmapDescriptorFactory.fromResource(R.mipmap.ambulance_small)));
                     mMap.addMarker(new MarkerOptions().position(currentLocation).title("you are here"));
                 }
             }
@@ -403,7 +401,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                     LatLng driverLtLng = new LatLng(latitude,longitude);
                                     mMap.clear();
                                     mMap.addMarker(new MarkerOptions().position(currentLocation).title("you are here with active request"));
-                                    mMap.addMarker(new MarkerOptions().position(driverLtLng).title("driver is here"));
+                                    mMap.addMarker(new MarkerOptions().position(driverLtLng).title("driver is here").icon(BitmapDescriptorFactory.fromResource(R.mipmap.ambulance_small)));
                                     double dis = distance(lat, log, latitude, longitude);
                                     km = dis / 0.62137;
                                     estimatedDistanceMap.setText(new DecimalFormat("##.####").format(km) + " km");
