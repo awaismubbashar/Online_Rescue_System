@@ -6,9 +6,11 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 import androidx.core.app.ActivityCompat;
+import androidx.core.app.NotificationCompat;
 import androidx.core.content.ContextCompat;
 
 import android.Manifest;
+import android.app.Notification;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -21,12 +23,22 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.DefaultRetryPolicy;
+import com.android.volley.RequestQueue;
+import com.android.volley.RetryPolicy;
+import com.android.volley.toolbox.Volley;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.Request;
 import com.example.OnlineRescueSystem.Model.Callinfo;
 import com.example.OnlineRescueSystem.Model.Registration;
 import com.example.OnlineRescueSystem.Model.UserRequest;
+import com.google.android.gms.common.api.Response;
+import com.google.android.gms.common.internal.Constants;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
@@ -35,6 +47,27 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import com.android.volley.AuthFailureError;
+//import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.xml.transform.ErrorListener;
 
 public class DashBoardLayout extends AppCompatActivity implements View.OnClickListener{
 
@@ -54,15 +87,13 @@ public class DashBoardLayout extends AppCompatActivity implements View.OnClickLi
     private String selectedDriver;
     private ImageView call;
     private String phoneNumber = "tel:03048146310";
-
+    private ImageView mOutputText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dash_board);
         call = findViewById(R.id.callIcon);
-
-
 
         mProgress = new ProgressDialog(DashBoardLayout.this);
         mAuth = FirebaseAuth.getInstance();
@@ -78,8 +109,39 @@ public class DashBoardLayout extends AppCompatActivity implements View.OnClickLi
             }
         };
         Log.d(TAG, "onDataChange: availed1");
+        sendFCMPush();
+        FirebaseInstanceId.getInstance().getInstanceId()
+                .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<InstanceIdResult> task) {
+                        if (!task.isSuccessful()) {
+                            Log.d(TAG, "getInstanceId failed", task.getException());
+                            return;
+                        }
 
-    }//
+                        // Get new Instance ID token
+                        String token = task.getResult().getToken();
+
+                        // Log and toast
+                        //String msg = getString(R.string.msg_token_fmt, token);
+                        Log.d(TAG, "msg"+token);
+                        //Toast.makeText(DashBoardLayout.this, "recieved", Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+//        mOutputText=findViewById(R.id.callIcon);
+//
+//        if (getIntent() != null && getIntent().hasExtra("key1")) {
+//            mOutputText.setText("");
+//
+//            for (String key : getIntent().getExtras().keySet()) {
+//                Log.d(TAG, "onCreate: Key: " + key + " Data: " + getIntent().getExtras().getString(key));
+//                mOutputText.append(getIntent().getExtras().getString(key) + "\n");
+//            }
+//
+//        }
+
+    }// end of onCreate
 
     public void onCall(View view){
         if (availed){
@@ -305,5 +367,68 @@ public class DashBoardLayout extends AppCompatActivity implements View.OnClickLi
         alert.show();
     }
 
+    private void sendFCMPush() {
+
+        final String Legacy_SERVER_KEY = "AAAANP5gGHA:APA91bFwye7sitBprCkqgXENmgMhsSdudtRmB4u6yqObSbSUP90SOIMpEGsY24tnpkGH7p7QEvI8g6oJhO3vC6QAEo0ksMz8j9adOeckLM6egaws-rmcSaTdPmNHAHPTw04aX4AJp6yW";
+        String msg = "you are selected for rescue service. Please go to your map to view your destination";
+        String title = "Rescue request";
+        String token = "ep2y0GfjNys:APA91bHb14p1SEfuXJE9Kr0eLSZMcLvX4LinkowDYuC9atGwkSeXhKkRW0WTBxOHXjNfXPC3nSkyPCT9EyWB_hoCmvMwp59T73dENGpLhOcM4jyVgP51FvBJskRPMaQKe1PtAn-K7-8q";
+
+        JSONObject obj = null;
+        JSONObject objData = null;
+        JSONObject dataobjData = null;
+
+        try {
+            obj = new JSONObject();
+            objData = new JSONObject();
+
+            objData.put("body", msg);
+            objData.put("title", title);
+            objData.put("sound",R.raw.sirena);
+            objData.put("icon", R.mipmap.ambulance_small); //   icon_name image must be there in drawable
+            objData.put("tag", token);
+            objData.put("priority", "high");
+
+            dataobjData = new JSONObject();
+            dataobjData.put("text", msg);
+            dataobjData.put("title", title);
+
+            obj.put("to", token);
+            //obj.put("priority", "high");
+
+            obj.put("notification", objData);
+            obj.put("data", dataobjData);
+            Log.e("!_@rj@_@@_PASS:>", obj.toString());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        JsonObjectRequest jsObjRequest = new JsonObjectRequest(com.android.volley.Request.Method.POST, "https://fcm.googleapis.com/fcm/send", obj,
+                new com.android.volley.Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        Log.e("!_@@_SUCESS", response + "");
+                    }
+                },
+                new com.android.volley.Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.e("!_@@_Errors--", error + "");
+                    }
+                }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("Authorization", "key=" + Legacy_SERVER_KEY);
+                params.put("Content-Type", "application/json");
+                return params;
+            }
+        };
+        RequestQueue requestQueue = Volley.newRequestQueue(this);
+        int socketTimeout = 1000 * 60;// 60 seconds
+        RetryPolicy policy = new DefaultRetryPolicy(socketTimeout, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
+        jsObjRequest.setRetryPolicy(policy);
+        requestQueue.add(jsObjRequest);
+    }
 }
 

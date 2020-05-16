@@ -18,6 +18,17 @@ import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.DefaultRetryPolicy;
+import com.android.volley.RequestQueue;
+import com.android.volley.RetryPolicy;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
+import com.directions.route.AbstractRouting;
+import com.directions.route.Route;
+import com.directions.route.Routing;
+import com.directions.route.RoutingListener;
 import com.example.OnlineRescueSystem.Model.Callinfo;
 import com.example.OnlineRescueSystem.Model.LocationInfo;
 import com.example.OnlineRescueSystem.Model.Registration;
@@ -30,6 +41,8 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -41,12 +54,20 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.StorageReference;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
+import okhttp3.internal.connection.RouteException;
+
+public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, RoutingListener {
 
     private GoogleMap mMap,mMap1;
     private LocationManager locationManager;
@@ -88,6 +109,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mUser = mAuth.getCurrentUser();
         subEmail = mUser.getEmail();
         subEmail = subEmail.substring(0, subEmail.indexOf("."));
+
         database = FirebaseDatabase.getInstance();
 //        myRef = database.getReference("Caller Data").child(subEmail).child("quaerty");
         myRef = database.getReference("Active Case");
@@ -230,7 +252,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
             }
         }
-
     }
 
     protected void onStartt() {
@@ -269,12 +290,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                 myRef1.child(""+selectedDriver).removeValue();
                                 UserRequest userRequest = new UserRequest(""+lat,""+log,""+selectedDriver);
                                 myRef4.child(subEmail).setValue(userRequest);
-
+                                sendFCMPush();
                                 UserRequest userRequest1 = new UserRequest(""+latitude,""+longitude,""+subEmail);
                                 myRef4.child(selectedDriver).setValue(userRequest1);
                             }else {
                                 onStartt();
                             }
+
+
 
                         }
 
@@ -350,6 +373,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     double dis = distance(lat, log, latitude, longitude);
                     km = dis / 0.62137;
                     estimatedDistanceMap.setText(new DecimalFormat("##.####").format(km) + " km");
+
                     estTime();
                     LatLng driverLoc = new LatLng(latitude,longitude);
                     mMap.clear();
@@ -402,6 +426,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                     mMap.clear();
                                     mMap.addMarker(new MarkerOptions().position(currentLocation).title("you are here with active request"));
                                     mMap.addMarker(new MarkerOptions().position(driverLtLng).title("driver is here").icon(BitmapDescriptorFactory.fromResource(R.mipmap.ambulance_small)));
+
+                                    getRouteToMarker(lat,log,latitude,longitude);
                                     double dis = distance(lat, log, latitude, longitude);
                                     km = dis / 0.62137;
                                     estimatedDistanceMap.setText(new DecimalFormat("##.####").format(km) + " km");
@@ -429,5 +455,136 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             mProgress1.dismiss();
         }
     }
+
+    private void sendFCMPush() {
+        final String Legacy_SERVER_KEY = "AAAANP5gGHA:APA91bFwye7sitBprCkqgXENmgMhsSdudtRmB4u6yqObSbSUP90SOIMpEGsY24tnpkGH7p7QEvI8g6oJhO3vC6QAEo0ksMz8j9adOeckLM6egaws-rmcSaTdPmNHAHPTw04aX4AJp6yW";
+        String msg = "you are selected for rescue service. Please go to your map to view your destination";
+        String title = "Rescue request";
+//        String token = "ep2y0GfjNys:APA91bHb14p1SEfuXJE9Kr0eLSZMcLvX4LinkowDYuC9atGwkSeXhKkRW0WTBxOHXjNfXPC3nSkyPCT9EyWB_hoCmvMwp59T73dENGpLhOcM4jyVgP51FvBJskRPMaQKe1PtAn-K7-8q";
+        String token = "e3GcxWQcQzCbOJurFwnTHn:APA91bGjS71XqKEuOjFhFmgX5yMyZtyC85GDy7P5_uFPCHMqwUpkq1UUHv-KsWrimQmmGChsOreyaQKur4O10qsVhQjJAfyJUq2wsxaiUIdRNkRG1X4EsYLZZEvMmznDHx5zkG9Yt71C";
+
+        JSONObject obj = null;
+        JSONObject objData = null;
+        JSONObject dataobjData = null;
+
+        try {
+            obj = new JSONObject();
+            objData = new JSONObject();
+
+            objData.put("body", msg);
+            objData.put("title", title);
+            objData.put("sound",R.raw.sirena);
+            objData.put("icon", R.mipmap.ambulance_small); //   icon_name image must be there in drawable
+            objData.put("tag", token);
+            objData.put("priority", "high");
+
+            dataobjData = new JSONObject();
+            dataobjData.put("text", msg);
+            dataobjData.put("title", title);
+
+            obj.put("to", token);
+            //obj.put("priority", "high");
+
+            obj.put("notification", objData);
+            obj.put("data", dataobjData);
+            Log.e("!_@rj@_@@_PASS:>", obj.toString());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        JsonObjectRequest jsObjRequest = new JsonObjectRequest(com.android.volley.Request.Method.POST, "https://fcm.googleapis.com/fcm/send", obj,
+                new com.android.volley.Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        Log.e("!_@@_SUCESS", response + "");
+                    }
+                },
+                new com.android.volley.Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.e("!_@@_Errors--", error + "");
+                    }
+                }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("Authorization", "key=" + Legacy_SERVER_KEY);
+                params.put("Content-Type", "application/json");
+                return params;
+            }
+        };
+        RequestQueue requestQueue = Volley.newRequestQueue(this);
+        int socketTimeout = 1000 * 60;// 60 seconds
+        RetryPolicy policy = new DefaultRetryPolicy(socketTimeout, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
+        jsObjRequest.setRetryPolicy(policy);
+        requestQueue.add(jsObjRequest);
+    }
+
+    // for draw route between two points from SIM coder
+
+    private void getRouteToMarker(double lat2,double log2, double latitude2, double longitude2){
+        Routing routing = new Routing.Builder()
+                .travelMode(AbstractRouting.TravelMode.DRIVING)
+                .withListener(this)
+                .alternativeRoutes(false)
+                .waypoints(new LatLng(lat2, log2),new LatLng(latitude2,longitude2))
+                .key("AIzaSyDpxqq5fXUcZSaH5SS_Luj2_uRpPxnNDP0")
+                .build();
+        routing.execute();
+    }
+
+    private List<Polyline> polylines;
+    //private static final int[] COLORS = new int[]{R.color.primary_dark_material_light};
+
+    //when alternative paths needed then following code
+    private static final int[] COLORS = new int[]{R.color.design_default_color_primary_dark,R.color.colorYellow,R.color.design_default_color_primary_dark,R.color.design_default_color_primary_dark,R.color.primary_dark_material_light};
+    // when alternaive paths
+
+
+    @Override
+    public void onRoutingFailure(com.directions.route.RouteException e) {
+        if(e != null) {
+            Toast.makeText(this, "Error:onRouting " + e.getMessage(), Toast.LENGTH_LONG).show();
+        }else {
+            Toast.makeText(this, "Something went wrong, Try again", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    public void onRoutingStart() {
+
+    }
+
+    @Override
+    public void onRoutingSuccess(ArrayList<Route> route, int shortestRouteIndex) {
+//        if(polylines.size()>0) {
+//            for (Polyline poly : polylines) {
+//                poly.remove();
+//            }
+//        }
+
+            polylines = new ArrayList<>();
+            //add route(s) to the map.
+            for (int i = 0; i <route.size(); i++) {
+
+                //In case of more than 5 alternative routes
+                int colorIndex = i % COLORS.length;
+
+                PolylineOptions polyOptions = new PolylineOptions();
+                polyOptions.color(getResources().getColor(COLORS[colorIndex]));
+                polyOptions.width(10 + i * 3);
+                polyOptions.addAll(route.get(i).getPoints());
+                Polyline polyline = mMap.addPolyline(polyOptions);
+                polylines.add(polyline);
+//                Toast.makeText(getApplicationContext(),"Route "+ (i+1) +": distance - "+ route.get(i).getDistanceValue()+": duration - "+ route.get(i).getDurationValue(),Toast.LENGTH_SHORT).show();
+            }
+    }
+
+    @Override
+    public void onRoutingCancelled() {
+
+    }
+
+
 }
 
