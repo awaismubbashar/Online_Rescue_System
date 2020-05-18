@@ -86,7 +86,7 @@ public class DashBoardLayout extends AppCompatActivity implements View.OnClickLi
     private String neededEmergency;
     private String selectedDriver;
     private ImageView call;
-    private String phoneNumber = "tel:03048146310";
+    private String phoneNumber = "tel:03344399899";
     private ImageView mOutputText;
 
     @Override
@@ -186,7 +186,7 @@ public class DashBoardLayout extends AppCompatActivity implements View.OnClickLi
 
     public void open(final String type) {
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
-        alertDialogBuilder.setMessage("Are you sure, You wanted to make a call to ::Rescue 1122::");
+        alertDialogBuilder.setMessage("Are you sure, You wanted to make a call to Rescue 1122");
         alertDialogBuilder.setPositiveButton("yes",
                 new DialogInterface.OnClickListener() {
                     @Override
@@ -228,7 +228,13 @@ public class DashBoardLayout extends AppCompatActivity implements View.OnClickLi
 
             }
         }else {
-            startActivity(new Intent(Intent.ACTION_CALL, Uri.parse(phoneNumber)));
+            //        Intent mapIntent = new Intent(DashBoardLayout.this,MapsActivity.class);
+//            mapIntent.putExtra("Accident",accidentType);
+//            mapIntent.putExtra("availed","false");
+//            mapIntent.putExtra("neededEmergency",neededEmergency);
+//            startActivity(mapIntent);
+        startActivity(new Intent(Intent.ACTION_CALL, Uri.parse(phoneNumber)));
+
         }
     }
 
@@ -315,9 +321,10 @@ public class DashBoardLayout extends AppCompatActivity implements View.OnClickLi
                         callerData.addValueEventListener(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                Registration registration = dataSnapshot.getValue(Registration.class);
-                                phoneNumber = "tel:"+(registration.getPhoneNumber());
-
+                                if (dataSnapshot.exists()){
+                                    Registration registration = dataSnapshot.getValue(Registration.class);
+                                    phoneNumber = "tel:"+(registration.getPhoneNumber());
+                                }
                             }
                             @Override
                             public void onCancelled(@NonNull DatabaseError databaseError) {
@@ -372,7 +379,7 @@ public class DashBoardLayout extends AppCompatActivity implements View.OnClickLi
         final String Legacy_SERVER_KEY = "AAAANP5gGHA:APA91bFwye7sitBprCkqgXENmgMhsSdudtRmB4u6yqObSbSUP90SOIMpEGsY24tnpkGH7p7QEvI8g6oJhO3vC6QAEo0ksMz8j9adOeckLM6egaws-rmcSaTdPmNHAHPTw04aX4AJp6yW";
         String msg = "you are selected for rescue service. Please go to your map to view your destination";
         String title = "Rescue request";
-        String token = "ep2y0GfjNys:APA91bHb14p1SEfuXJE9Kr0eLSZMcLvX4LinkowDYuC9atGwkSeXhKkRW0WTBxOHXjNfXPC3nSkyPCT9EyWB_hoCmvMwp59T73dENGpLhOcM4jyVgP51FvBJskRPMaQKe1PtAn-K7-8q";
+        String token = "fz4ZfeHDRHGMtVGzKYwr7A:APA91bGOOmrcM6saksXSv34ybsXz7OIW5tXYSaoP9AS0xeSAgsiU6gw3ThfPn1hTOzsAwUenbGX4tk6DFZFcCABj-WYJu0MrRgoCLyzgBjviXno9CNEEEaEl1x3I3azd92GiyEKBlnKm";
 
         JSONObject obj = null;
         JSONObject objData = null;

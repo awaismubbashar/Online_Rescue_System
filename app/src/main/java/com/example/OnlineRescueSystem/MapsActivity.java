@@ -65,8 +65,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import okhttp3.internal.connection.RouteException;
-
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, RoutingListener {
 
     private GoogleMap mMap,mMap1;
@@ -158,6 +156,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                             //user location
                             mMap.clear();
+                           /// mMap.animateCamera(CameraUpdateFactory.newLatLng(currentLocation));
                             mMap.addMarker(new MarkerOptions().position(currentLocation).title("YOU ARE HERE"));
                             //user marker
 
@@ -167,6 +166,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         } else if (lat > 20 && log > 20) {
 
                             mMap.clear();
+                            mMap.animateCamera(CameraUpdateFactory.newLatLng(currentLocation));
+                            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 15));
                             mMap.addMarker(new MarkerOptions().position(currentLocation).title("You are here with no request"));
                             locationManager.removeUpdates(locationListener);
 
@@ -231,12 +232,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-        mMap.clear();
+
         LatLng newLocation = new LatLng(31.177167,74.105169);
         mMap.animateCamera(CameraUpdateFactory.newLatLng(newLocation));
-        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(newLocation, 15));
-        mMap.addMarker(new MarkerOptions().position(newLocation).title("YOU ARE HERE"));
-
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(newLocation, 13));
+        //mMap.addMarker(new MarkerOptions().position(newLocation).title("YOU ARE HERE"));
+        ///mMap.clear();
         //mMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
     }
 
@@ -321,7 +322,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                 }else {
                     Toast.makeText(MapsActivity.this,"Try later! There is no driver available..",Toast.LENGTH_LONG).show();
-                    onActive();
+//                    onActive();
                 }
                 mProgress1.dismiss();
             }
@@ -460,8 +461,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         final String Legacy_SERVER_KEY = "AAAANP5gGHA:APA91bFwye7sitBprCkqgXENmgMhsSdudtRmB4u6yqObSbSUP90SOIMpEGsY24tnpkGH7p7QEvI8g6oJhO3vC6QAEo0ksMz8j9adOeckLM6egaws-rmcSaTdPmNHAHPTw04aX4AJp6yW";
         String msg = "you are selected for rescue service. Please go to your map to view your destination";
         String title = "Rescue request";
-//        String token = "ep2y0GfjNys:APA91bHb14p1SEfuXJE9Kr0eLSZMcLvX4LinkowDYuC9atGwkSeXhKkRW0WTBxOHXjNfXPC3nSkyPCT9EyWB_hoCmvMwp59T73dENGpLhOcM4jyVgP51FvBJskRPMaQKe1PtAn-K7-8q";
-        String token = "e3GcxWQcQzCbOJurFwnTHn:APA91bGjS71XqKEuOjFhFmgX5yMyZtyC85GDy7P5_uFPCHMqwUpkq1UUHv-KsWrimQmmGChsOreyaQKur4O10qsVhQjJAfyJUq2wsxaiUIdRNkRG1X4EsYLZZEvMmznDHx5zkG9Yt71C";
+        String token = "MHMHlfhRDKs4j9SONwNbB:APA91bHlZ7BndNcE6czOv4cWi7NN0FYXx9OcS9kznFaoAtRhK5dqhmqBrDf1uTaJtGD-93TX-WfpvS2E2ITUyhBGZa_Qe9R9KNqZxibO0029mTrDkANyh7zEBwjVfNCPmCF6fAuXv_mw";
+//        String token = "e3GcxWQcQzCbOJurFwnTHn:APA91bGjS71XqKEuOjFhFmgX5yMyZtyC85GDy7P5_uFPCHMqwUpkq1UUHv-KsWrimQmmGChsOreyaQKur4O10qsVhQjJAfyJUq2wsxaiUIdRNkRG1X4EsYLZZEvMmznDHx5zkG9Yt71C";
 
         JSONObject obj = null;
         JSONObject objData = null;
@@ -534,7 +535,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     private List<Polyline> polylines;
-    //private static final int[] COLORS = new int[]{R.color.primary_dark_material_light};
+//    private static final int[] COLORS = new int[]{R.color.primary_dark_material_light};
 
     //when alternative paths needed then following code
     private static final int[] COLORS = new int[]{R.color.design_default_color_primary_dark,R.color.colorYellow,R.color.design_default_color_primary_dark,R.color.design_default_color_primary_dark,R.color.primary_dark_material_light};
