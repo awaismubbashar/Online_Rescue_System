@@ -120,23 +120,30 @@ public class RegisterActivity extends AppCompatActivity {
             public void onClick(View v) {
                 final String email = emailRegister.getText().toString();
                 final String password = passwordRegister.getText().toString();
+                final String mName = FullnameRegister.getText().toString().trim();
+                final String mNumber = phoneNumberRegister.getText().toString().trim();
+                final String maddress = addressRegister.getText().toString().trim();
+
 
                 if (email != null && password != null) {
                     if (!TextUtils.isEmpty(emailRegister.getText().toString())
-                            && !TextUtils.isEmpty(passwordRegister.getText().toString())) {
+                            && !TextUtils.isEmpty(passwordRegister.getText().toString()) && !TextUtils.isEmpty(mName) && !TextUtils.isEmpty(mNumber)
+                            && !TextUtils.isEmpty(maddress)) {
                         mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(RegisterActivity.this, new OnCompleteListener<AuthResult>() {
                             @Override
                             public void onComplete(@NonNull Task<AuthResult> task) {
                                 if (!task.isSuccessful()) {
-                                    Toast.makeText(RegisterActivity.this, "something went wrong here...", Toast.LENGTH_LONG)
+                                    Toast.makeText(RegisterActivity.this, "something wrong", Toast.LENGTH_LONG)
                                             .show();
                                 } else { startPosting();
                                 }
                             }
                         });
                     } else {
-
+                        Toast.makeText(RegisterActivity.this,"Fill all field",Toast.LENGTH_LONG).show();
                     }
+                }else {
+                    Toast.makeText(getApplicationContext(),"Fill all field",Toast.LENGTH_LONG).show();
                 }
             }
         });

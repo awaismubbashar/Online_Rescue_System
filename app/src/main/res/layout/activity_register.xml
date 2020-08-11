@@ -113,16 +113,17 @@
         app:layout_constraintTop_toBottomOf="@+id/addressEditTextID_register"
         app:layout_constraintVertical_bias="0.352" />
 
+
+
     <EditText
         android:id="@+id/phoneEditTextNoID_register"
         android:layout_width="@dimen/activity_register_edittext_width"
         android:layout_height="@dimen/activity_register_edittext_hight"
-
         android:layout_marginTop="5dp"
         android:background="@drawable/border"
         android:ems="10"
+        android:inputType="textEmailAddress"
         android:hint="Email"
-        android:inputType="text"
         android:paddingLeft="@dimen/activity_register_edittext_padding_left"
         android:textColor="@color/colorWhite"
         android:textColorHint="@color/colorWhite"
@@ -164,5 +165,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/loginButtonID_register"
         app:layout_constraintVertical_bias="0.057" />
+
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

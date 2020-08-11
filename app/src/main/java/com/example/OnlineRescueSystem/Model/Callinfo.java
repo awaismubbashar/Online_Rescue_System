@@ -5,17 +5,50 @@ public class Callinfo {
     private String lat;
     private String log;
     private String callType;
-    private String date;
+    private String hour;
+    private String minute;
+    private String second;
 
+    public String getHour() {
+        return hour;
+    }
+
+    public void setHour(String hour) {
+        this.hour = hour;
+    }
+
+    public String getMinute() {
+        return minute;
+    }
+
+    public void setMinute(String minute) {
+        this.minute = minute;
+    }
+
+    public String getSecond() {
+        return second;
+    }
+
+    public void setSecond(String second) {
+        this.second = second;
+    }
 
     public Callinfo() {
     }
 
-    public Callinfo(String lat, String log, String callType, String date) {
+    public Callinfo(String lat, String log, String callType, String hour, String minute, String second) {
         this.lat = lat;
         this.log = log;
         this.callType = callType;
-        this.date = date;
+        this.hour = hour;
+        this.minute = minute;
+        this.second = second;
+    }
+
+    public Callinfo(String lat, String log, String callType) {
+        this.lat = lat;
+        this.log = log;
+        this.callType = callType;
     }
 
     public String getLat() {
@@ -42,11 +75,5 @@ public class Callinfo {
         this.callType = callType;
     }
 
-    public String getDate() {
-        return date;
-    }
 
-    public void setDate(String date) {
-        this.date = date;
-    }
 }

@@ -7,13 +7,18 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
 
 import android.Manifest;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.icu.util.Calendar;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -58,6 +63,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -75,9 +81,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private FirebaseAuth mAuth;
     private FirebaseUser mUser;
     private static final String TAG = "MapsActivity";
-    private String selectedDriver,neededEmergency,subEmail;
+    private String selectedDriver,neededEmergency,subEmail,time;
     private static double lat,log,latitude,longitude,km;
     private ProgressDialog mProgress1;
+    private int hour,minute,second;
     LatLng currentLocation;
     HashMap<Double,String> hashMap;
     HashMap<String,LatLng> driverLatLong;
@@ -90,6 +97,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
 
+        checkGPSStatus();
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
@@ -97,7 +105,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         estimatedDistanceMap = findViewById(R.id.distanceLocation);
         estimatedTimeMap = findViewById(R.id.estimatedTimeLocation);
+        Calendar calendar = Calendar.getInstance();
+         hour = calendar.get(Calendar.HOUR_OF_DAY);
+         minute = calendar.get(Calendar.MINUTE);
+         second = calendar.get(Calendar.SECOND);
+//        int date = calendar.get(Calendar.DAY_OF_MONTH);
+//        int month = calendar.get(Calendar.MONTH);
+//        int year = calendar.get(Calendar.YEAR);;
+        SimpleDateFormat format = new SimpleDateFormat();
+        time = ""+calendar.getTime();
 
+        Log.d(TAG, "onCreate: " + hour+"mm: "+minute+" ss: "+second);
         mProgress1 = new ProgressDialog(MapsActivity.this);
 
         hashMap = new HashMap<Double,String>();
@@ -109,8 +127,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         subEmail = subEmail.substring(0, subEmail.indexOf("."));
 
         database = FirebaseDatabase.getInstance();
-//        myRef = database.getReference("Caller Data").child(subEmail).child("quaerty");
-        myRef = database.getReference("Active Case");
+        myRef = database.getReference("Caller Data").child(subEmail).child("History").child(time);
         myRef4 = database.getReference("Active Case");
 
 //         this is how to delete child from firebase
@@ -151,9 +168,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                         if (!accident1.isEmpty()) {
                             currentLocation = new LatLng(lat, log);
-                            String time = String.valueOf(java.lang.System.currentTimeMillis());
-                            Callinfo callinfo1 = new Callinfo("" + lat, "" + log, "" + accident1, "" + time);
 
+                            Callinfo callinfo = new Callinfo("" + lat, "" + log, "" + accident1, ""+hour, ""+minute, ""+second);
+                            myRef.setValue(callinfo);
                             //user location
                             mMap.clear();
                            /// mMap.animateCamera(CameraUpdateFactory.newLatLng(currentLocation));
@@ -227,8 +244,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         return (rad * 180.0 / Math.PI);
     }
 // distance calculation
-
-
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
@@ -294,12 +309,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                 sendFCMPush();
                                 UserRequest userRequest1 = new UserRequest(""+latitude,""+longitude,""+subEmail);
                                 myRef4.child(selectedDriver).setValue(userRequest1);
+
                             }else {
                                 onStartt();
                             }
-
-
-
                         }
 
                         @Override
@@ -323,7 +336,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 }else {
                     Toast.makeText(MapsActivity.this,"Try later! There is no driver available..",Toast.LENGTH_LONG).show();
 //                    onActive();
-                }
+                    }
                 mProgress1.dismiss();
             }
 
@@ -457,12 +470,42 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
     }
 
+    private void checkGPSStatus() {
+        LocationManager locationManager = null;
+        boolean gps_enabled = false;
+        boolean network_enabled = false;
+        if ( locationManager == null ) {
+            locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        }
+        try {
+            gps_enabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+        } catch (Exception ex){}
+        try {
+            network_enabled = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+        } catch (Exception ex){}
+        if ( !gps_enabled && !network_enabled ){
+            AlertDialog.Builder dialog = new AlertDialog.Builder(MapsActivity.this);
+            dialog.setMessage("GPS not enabled");
+            dialog.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    //this will navigate user to the device location settings screen
+                    Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                    startActivity(intent);
+                }
+            });
+            AlertDialog alert = dialog.create();
+            alert.show();
+        }
+    }
+
     private void sendFCMPush() {
+
         final String Legacy_SERVER_KEY = "AAAANP5gGHA:APA91bFwye7sitBprCkqgXENmgMhsSdudtRmB4u6yqObSbSUP90SOIMpEGsY24tnpkGH7p7QEvI8g6oJhO3vC6QAEo0ksMz8j9adOeckLM6egaws-rmcSaTdPmNHAHPTw04aX4AJp6yW";
         String msg = "you are selected for rescue service. Please go to your map to view your destination";
         String title = "Rescue request";
-        String token = "MHMHlfhRDKs4j9SONwNbB:APA91bHlZ7BndNcE6czOv4cWi7NN0FYXx9OcS9kznFaoAtRhK5dqhmqBrDf1uTaJtGD-93TX-WfpvS2E2ITUyhBGZa_Qe9R9KNqZxibO0029mTrDkANyh7zEBwjVfNCPmCF6fAuXv_mw";
-//        String token = "e3GcxWQcQzCbOJurFwnTHn:APA91bGjS71XqKEuOjFhFmgX5yMyZtyC85GDy7P5_uFPCHMqwUpkq1UUHv-KsWrimQmmGChsOreyaQKur4O10qsVhQjJAfyJUq2wsxaiUIdRNkRG1X4EsYLZZEvMmznDHx5zkG9Yt71C";
+        String token = "fz4ZfeHDRHGMtVGzKYwr7A:APA91bGOOmrcM6saksXSv34ybsXz7OIW5tXYSaoP9AS0xeSAgsiU6gw3ThfPn1hTOzsAwUenbGX4tk6DFZFcCABj-WYJu0MrRgoCLyzgBjviXno9CNEEEaEl1x3I3azd92GiyEKBlnKm";
 
         JSONObject obj = null;
         JSONObject objData = null;
@@ -520,7 +563,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         jsObjRequest.setRetryPolicy(policy);
         requestQueue.add(jsObjRequest);
     }
-
     // for draw route between two points from SIM coder
 
     private void getRouteToMarker(double lat2,double log2, double latitude2, double longitude2){

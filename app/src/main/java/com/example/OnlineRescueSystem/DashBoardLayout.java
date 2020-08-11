@@ -12,11 +12,14 @@ import androidx.core.content.ContextCompat;
 import android.Manifest;
 import android.app.Notification;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -94,7 +97,7 @@ public class DashBoardLayout extends AppCompatActivity implements View.OnClickLi
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dash_board);
         call = findViewById(R.id.callIcon);
-
+        checkGPSStatus();
         mProgress = new ProgressDialog(DashBoardLayout.this);
         mAuth = FirebaseAuth.getInstance();
         mUser = mAuth.getCurrentUser();
@@ -185,40 +188,88 @@ public class DashBoardLayout extends AppCompatActivity implements View.OnClickLi
 
 
     public void open(final String type) {
-        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
-        alertDialogBuilder.setMessage("Are you sure, You wanted to make a call to Rescue 1122");
-        alertDialogBuilder.setPositiveButton("yes",
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface arg0, int arg1) {
 
-                        if (type == "RoadAccident case" || type == "Medical case" || type == "Crime case" || type == "Simple call"){
-                            neededEmergency = "Accident recovery team";
-                        }else if (type == "Building collapse case"){
-                            neededEmergency = "Rescue service";
-                        }else if (type == "drowning case"){
-                            neededEmergency = "life guard service";
-                        }else if (type == "Fire case"){
-                            neededEmergency = "Fire brigade";
+        LocationManager locationManager = null;
+        boolean gps_enabled = false;
+        boolean network_enabled = false;
+        if (locationManager == null) {
+            locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        }
+        try {
+            gps_enabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+
+        } catch (Exception ex) {
+        }
+        try {
+            network_enabled = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+        } catch (Exception ex) {
+        }
+        if (!gps_enabled && !network_enabled) {
+            AlertDialog.Builder dialog = new AlertDialog.Builder(DashBoardLayout.this);
+            dialog.setMessage("GPS not enabled");
+            dialog.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    //this will navigate user to the device location settings screen
+                    Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                    startActivity(intent);
+                }
+            });
+            AlertDialog alert = dialog.create();
+            alert.show();
+        } else {
+
+            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+            alertDialogBuilder.setMessage("Are you sure, You wanted to make a call to Rescue 1122");
+            alertDialogBuilder.setPositiveButton("yes",
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface arg0, int arg1) {
+
+                            if (type == "RoadAccident case" || type == "Medical case" || type == "Crime case" || type == "Simple call") {
+                                neededEmergency = "Accident recovery team";
+                            } else if (type == "Building collapse case") {
+                                neededEmergency = "Rescue service";
+                            } else if (type == "drowning case") {
+                                neededEmergency = "life guard service";
+                            } else if (type == "Fire case") {
+                                neededEmergency = "Fire brigade";
+                            }
+                            accidentType = type;
+                            makeCall();
                         }
-                        accidentType = type;
-                        makeCall();
-                    }
-                });
+                    });
 
-        alertDialogBuilder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            alertDialogBuilder.setNegativeButton("No", new DialogInterface.OnClickListener() {
 
-            public void onClick(DialogInterface dialog, int which) {
-                Toast.makeText(DashBoardLayout.this, "You clicked No button", Toast.LENGTH_SHORT).show();
-                Toast.makeText(DashBoardLayout.this, " Press Yes if you need 1122", Toast.LENGTH_LONG).show();
-            }
-        });
+                public void onClick(DialogInterface dialog, int which) {
+                    Toast.makeText(DashBoardLayout.this, "You clicked No button", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(DashBoardLayout.this, " Press Yes if you need 1122", Toast.LENGTH_LONG).show();
+                }
+            });
 
-        AlertDialog alertDialog = alertDialogBuilder.create();
-        alertDialog.show();
+            AlertDialog alertDialog = alertDialogBuilder.create();
+            alertDialog.show();
+        }
     }
 
     protected void makeCall() {
+
+        if (!availed){
+            Intent intent = new Intent(DashBoardLayout.this,MapsActivity.class);
+            intent.putExtra("Accident",accidentType);
+            intent.putExtra("availed","false");
+            intent.putExtra("neededEmergency",neededEmergency);
+            startActivity(intent);
+        }
+        else {
+            Intent intent = new Intent(DashBoardLayout.this,MapsActivity.class);
+            Log.d(TAG, "onMap: "+availed);
+            intent.putExtra("availed","true");
+            startActivity(intent);
+        }
+
 
         Intent callIntent = new Intent(Intent.ACTION_CALL);
         callIntent.setData(Uri.parse(phoneNumber));
@@ -233,7 +284,7 @@ public class DashBoardLayout extends AppCompatActivity implements View.OnClickLi
 //            mapIntent.putExtra("availed","false");
 //            mapIntent.putExtra("neededEmergency",neededEmergency);
 //            startActivity(mapIntent);
-        startActivity(new Intent(Intent.ACTION_CALL, Uri.parse(phoneNumber)));
+            startActivity(new Intent(Intent.ACTION_CALL, Uri.parse(phoneNumber)));
 
         }
     }
@@ -246,7 +297,7 @@ public class DashBoardLayout extends AppCompatActivity implements View.OnClickLi
             intent.putExtra("availed","false");
             intent.putExtra("neededEmergency",neededEmergency);
             startActivity(intent);
-    }
+        }
         else {
             Intent intent = new Intent(DashBoardLayout.this,MapsActivity.class);
             Log.d(TAG, "onMap: "+availed);
@@ -282,13 +333,14 @@ public class DashBoardLayout extends AppCompatActivity implements View.OnClickLi
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()){
             case R.id.action_profile:
-
                 Intent intent3 = new Intent(DashBoardLayout.this,ProfileActivity.class);
                 startActivity(intent3);
                 break;
         }
         return super.onOptionsItemSelected(item);
     }
+
+
 
     @Override
     protected void onStart() {
@@ -350,6 +402,35 @@ public class DashBoardLayout extends AppCompatActivity implements View.OnClickLi
 
     }
 
+    private void checkGPSStatus() {
+        LocationManager locationManager = null;
+        boolean gps_enabled = false;
+        boolean network_enabled = false;
+        if ( locationManager == null ) {
+            locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        }
+        try {
+            gps_enabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+        } catch (Exception ex){}
+        try {
+            network_enabled = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+        } catch (Exception ex){}
+        if ( !gps_enabled && !network_enabled ){
+            AlertDialog.Builder dialog = new AlertDialog.Builder(DashBoardLayout.this);
+            dialog.setMessage("GPS not enabled");
+            dialog.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    //this will navigate user to the device location settings screen
+                    Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                    startActivity(intent);
+                }
+            });
+            AlertDialog alert = dialog.create();
+            alert.show();
+        }
+    }
     @Override
     protected void onStop() {
         super.onStop();
